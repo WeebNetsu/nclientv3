@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nclientv3/models/cook.dart';
 import 'package:nclientv3/utils/utils.dart';
 import 'package:nhentai/before_request_add_cookies.dart';
-import 'package:nhentai/nhentai.dart';
+import 'package:nhentai/nhentai.dart' as nh;
 
 class BrowseView extends StatefulWidget {
   const BrowseView({super.key});
@@ -27,7 +26,7 @@ class _BrowseViewState extends State<BrowseView> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       await FkUserAgent.init();
       initPlatformState();
     });
@@ -38,7 +37,6 @@ class _BrowseViewState extends State<BrowseView> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       platformVersion = FkUserAgent.userAgent!;
-      print(platformVersion);
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -64,23 +62,38 @@ class _BrowseViewState extends State<BrowseView> {
       return setNotRobot();
     }
 
-    for (var c in t) {
-      debugPrint(c.value);
-    }
+    // for (var c in t) {
+    //   debugPrint(c.value);
+    // }
 
+// Dalvik/2.1.0 (Linux; U; Android 13; sdk_gphone_x86_64 Build/TE1A.220922.025)
+    debugPrint('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+    debugPrint(cooks.toString());
     debugPrint(_platformVersion);
 
-    final api = API(
-      userAgent: _platformVersion,
+    final api = nh.API(
+      //   userAgent:
+      //   'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) FxQuantum/114.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36',
+      userAgent:
+          "Mozilla/5.0 (Linux; Android 13; sdk_gphone_x86_64 Build/TE1A.220922.025; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/103.0.5060.71 Mobile Safari/537.36",
       // Add before request handler
+      //   beforeRequest: beforeRequestAddCookiesStatic(
+      //     t.map((e) => Cookie(e.name, e.value)).toList(),
+      //   ),
       beforeRequest: beforeRequestAddCookiesStatic(
-        t.map((e) => Cookie(e.name, e.value)).toList(),
+        cooks,
       ),
+      //   beforeRequest: beforeRequestAddCookiesStatic(
+      //     [
+      //       Cookie('csrftoken', '9pL4YhMh30nXpIFKPQwGfcgwe1QsNQ3G1tIRn2CxfUGJhhzq677nImcgaPST8d5b'),
+      //       Cookie('cf_clearance', '_83URPfYpPYFOgc9WPuPQlvUAZ01CVZsOs4LKK0WHiA-1689488049-0-160'),
+      //     ],
+      //   ),
     );
 
     try {
       /// Throws if book is not found, or parse failed, see docs.
-      final Book book = await api.getBook(177013);
+      final nh.Book book = await api.getBook(177013);
 
       // Short book summary
       debugPrint('Book: $book\n'
@@ -90,7 +103,7 @@ class _BrowseViewState extends State<BrowseView> {
           // 'First page: ${book.pages.first.getUrl(api: api)}\n'
           // 'First page thumbnail: ${book.pages.first.thumbnail.getUrl(api: api)}\n',
           );
-    } on ApiClientException catch (e) {
+    } on nh.ApiClientException catch (e) {
       debugPrint('originalException ${e.originalException}');
       debugPrint('message ${e.message}');
       debugPrint('reasonPhrase ${e.response?.reasonPhrase}');
@@ -112,16 +125,16 @@ class _BrowseViewState extends State<BrowseView> {
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
                 MaterialButton(
                   onPressed: getData,
-                  child: Text('Get data'),
+                  child: const Text('Get data'),
                 ),
                 MaterialButton(
                   onPressed: setNotRobot,
-                  child: Text('Fetch Tokens'),
+                  child: const Text('Fetch Tokens'),
                 ),
               ],
             ),
