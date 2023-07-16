@@ -9,5 +9,5 @@ class NHentaiConstants {
   */
 
   /// This is the appwrite database ID
-//   static const String databaseId = "642c7a1253042d094e41";
+  static const String url = "https://nhentai.net/";
 }
