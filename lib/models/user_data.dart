@@ -94,8 +94,9 @@ class UserDataModel {
     final List<Cookie> extractedCookies = [];
 
     if (userDataJson['cookies'] != null) {
-      for (var cookie in userDataJson['cookies']) {
-        // check if type of cookie is string
+      List<dynamic> retrievedCookies = jsonDecode(userDataJson['cookies'].toString());
+
+      for (var cookie in retrievedCookies) {
         extractedCookies.add(Cookie(
           cookie['name'],
           cookie['value'],
@@ -104,7 +105,8 @@ class UserDataModel {
     }
 
     cookies = extractedCookies;
-    userAgent = userDataJson['userAgent'];
+    // not decoding it will leave quotes in the string
+    userAgent = jsonDecode(userDataJson['userAgent'].toString());
 
     return true;
   }
