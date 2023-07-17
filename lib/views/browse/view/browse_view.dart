@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nclientv3/models/models.dart';
+import 'package:nclientv3/widgets/book_cover_widget.dart';
 import 'package:nhentai/before_request_add_cookies.dart';
 import 'package:nhentai/nhentai.dart' as nh;
 
@@ -18,6 +19,7 @@ class BrowseView extends StatefulWidget {
 
 class _BrowseViewState extends State<BrowseView> {
   final _userData = UserDataModel();
+  final buttonsDisabled = true;
 
   @override
   void initState() {
@@ -78,22 +80,56 @@ class _BrowseViewState extends State<BrowseView> {
       // In Flutter, SingleChildScrollView is a widget that allows its child to be scrolled
       // in a single axis (either horizontally or vertically). It's often used to enable scrolling
       // for a widget that would otherwise overflow the screen.
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                MaterialButton(
-                  onPressed: getData,
-                  child: const Text('Get data'),
-                ),
-                MaterialButton(
-                  onPressed: setNotRobot,
-                  child: const Text('Fetch Tokens'),
-                ),
-              ],
-            ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  MaterialButton(
+                    onPressed: buttonsDisabled ? null : getData,
+                    child: const Text('Get data'),
+                  ),
+                  MaterialButton(
+                    onPressed: buttonsDisabled ? null : setNotRobot,
+                    child: const Text('Fetch Tokens'),
+                  ),
+                ],
+              ),
+              const Row(
+                children: [
+                  BookCoverWidget(),
+                  BookCoverWidget(),
+                ],
+              ),
+              const Row(
+                children: [
+                  BookCoverWidget(),
+                  BookCoverWidget(),
+                ],
+              ),
+              const Row(
+                children: [
+                  BookCoverWidget(),
+                  BookCoverWidget(),
+                ],
+              ),
+              const Row(
+                children: [
+                  BookCoverWidget(),
+                  BookCoverWidget(),
+                ],
+              ),
+              const Row(
+                children: [
+                  BookCoverWidget(),
+                  BookCoverWidget(),
+                ],
+              ),
+              const SizedBox(height: 40),
+            ],
           ),
         ),
       ),
