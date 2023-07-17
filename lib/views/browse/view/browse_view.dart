@@ -1,8 +1,5 @@
-import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:nclientv3/models/cook.dart';
-import 'package:nclientv3/utils/utils.dart';
+import 'package:nclientv3/models/models.dart';
 import 'package:nhentai/before_request_add_cookies.dart';
 import 'package:nhentai/nhentai.dart' as nh;
 
@@ -20,35 +17,11 @@ class BrowseView extends StatefulWidget {
 }
 
 class _BrowseViewState extends State<BrowseView> {
-  String _platformVersion = 'Unknown';
+  final _userData = UserDataModel();
 
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      await FkUserAgent.init();
-      initPlatformState();
-    });
-  }
-
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = FkUserAgent.userAgent!;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
   }
 
   void setNotRobot() {
@@ -56,39 +29,21 @@ class _BrowseViewState extends State<BrowseView> {
   }
 
   void getData() async {
-    final t = await loadCookieData();
+    await _userData.loadDataFromFile();
 
-    if (t == null || t.isEmpty) {
+    final cookies = _userData.cookies;
+    final userAgent = _userData.userAgent;
+
+    if (cookies == null || cookies.isEmpty || userAgent == null || userAgent.isEmpty) {
       return setNotRobot();
     }
 
-    // for (var c in t) {
-    //   debugPrint(c.value);
-    // }
-
-// Dalvik/2.1.0 (Linux; U; Android 13; sdk_gphone_x86_64 Build/TE1A.220922.025)
-    debugPrint('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-    debugPrint(cooks.toString());
-    debugPrint(_platformVersion);
-
     final api = nh.API(
-      //   userAgent:
       //   'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) FxQuantum/114.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36',
-      userAgent:
-          "Mozilla/5.0 (Linux; Android 13; sdk_gphone_x86_64 Build/TE1A.220922.025; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/103.0.5060.71 Mobile Safari/537.36",
-      // Add before request handler
-      //   beforeRequest: beforeRequestAddCookiesStatic(
-      //     t.map((e) => Cookie(e.name, e.value)).toList(),
-      //   ),
+      userAgent: userAgent,
       beforeRequest: beforeRequestAddCookiesStatic(
-        cooks,
+        cookies,
       ),
-      //   beforeRequest: beforeRequestAddCookiesStatic(
-      //     [
-      //       Cookie('csrftoken', '9pL4YhMh30nXpIFKPQwGfcgwe1QsNQ3G1tIRn2CxfUGJhhzq677nImcgaPST8d5b'),
-      //       Cookie('cf_clearance', '_83URPfYpPYFOgc9WPuPQlvUAZ01CVZsOs4LKK0WHiA-1689488049-0-160'),
-      //     ],
-      //   ),
     );
 
     try {
@@ -96,13 +51,14 @@ class _BrowseViewState extends State<BrowseView> {
       final nh.Book book = await api.getBook(177013);
 
       // Short book summary
-      debugPrint('Book: $book\n'
-          // 'Artists: ${book.tags.artists.join(', ')}\n'
-          // 'Languages: ${book.tags.languages.join(', ')}\n'
-          // 'Cover: ${book.cover.getUrl(api: api)}\n'
-          // 'First page: ${book.pages.first.getUrl(api: api)}\n'
-          // 'First page thumbnail: ${book.pages.first.thumbnail.getUrl(api: api)}\n',
-          );
+      debugPrint(
+        'Book: $book\n'
+        'Artists: ${book.tags.artists.join(', ')}\n'
+        'Languages: ${book.tags.languages.join(', ')}\n'
+        'Cover: ${book.cover.getUrl(api: api)}\n'
+        'First page: ${book.pages.first.getUrl(api: api)}\n'
+        'First page thumbnail: ${book.pages.first.thumbnail.getUrl(api: api)}\n',
+      );
     } on nh.ApiClientException catch (e) {
       debugPrint('originalException ${e.originalException}');
       debugPrint('message ${e.message}');

@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Twitter Clone',
+      title: 'NClient V3',
       theme: AppTheme.theme,
       //   home: const NotARobotView(),
       routes: routes,

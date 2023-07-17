@@ -38,7 +38,8 @@ dependencies:
   webview_flutter: ^4.2.2
   webview_cookie_manager: ^2.0.6
   path_provider: ^2.0.15
-  fk_user_agent: ^2.1.0
+  # ! do not use below, it webview returns a different agent
+  # fk_user_agent: ^2.1.0
 
 dev_dependencies:
   flutter_test:
