@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nclientv3/widgets/book_cover_widget.dart';
 
 class ReadBookView extends StatefulWidget {
   const ReadBookView({super.key});
@@ -29,36 +28,36 @@ class _ReadBookViewState extends State<ReadBookView> {
           child: Column(
             children: [
               SizedBox(height: 20),
-              Row(
-                children: [
-                  BookCoverWidget(),
-                  BookCoverWidget(),
-                ],
-              ),
-              Row(
-                children: [
-                  BookCoverWidget(),
-                  BookCoverWidget(),
-                ],
-              ),
-              Row(
-                children: [
-                  BookCoverWidget(),
-                  BookCoverWidget(),
-                ],
-              ),
-              Row(
-                children: [
-                  BookCoverWidget(),
-                  BookCoverWidget(),
-                ],
-              ),
-              Row(
-                children: [
-                  BookCoverWidget(),
-                  BookCoverWidget(),
-                ],
-              ),
+              //   Row(
+              //     children: [
+              //       BookCoverWidget(),
+              //       BookCoverWidget(),
+              //     ],
+              //   ),
+              //   Row(
+              //     children: [
+              //       BookCoverWidget(),
+              //       BookCoverWidget(),
+              //     ],
+              //   ),
+              //   Row(
+              //     children: [
+              //       BookCoverWidget(),
+              //       BookCoverWidget(),
+              //     ],
+              //   ),
+              //   Row(
+              //     children: [
+              //       BookCoverWidget(),
+              //       BookCoverWidget(),
+              //     ],
+              //   ),
+              //   Row(
+              //     children: [
+              //       BookCoverWidget(),
+              //       BookCoverWidget(),
+              //     ],
+              //   ),
               SizedBox(height: 40),
             ],
           ),

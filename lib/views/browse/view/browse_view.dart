@@ -22,40 +22,26 @@ class BrowseView extends StatefulWidget {
 
 class _BrowseViewState extends State<BrowseView> {
   final _userData = UserDataModel();
-  final buttonsDisabled = true;
+//   final _buttonsDisabled = DevConstants.releaseMode;
+  late nh.API _api;
+  List<nh.Book> _recentBooks = [];
   final FocusNode _focusNode = FocusNode();
   late StreamSubscription<bool> keyboardSubscription;
 
-  @override
-  void initState() {
-    super.initState();
-
-    var keyboardVisibilityController = KeyboardVisibilityController();
-
-    // Subscribe
-    keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
-      print('Keyboard visibility update. Is visible: $visible');
-      if (!visible) {
-        // SystemChannels.textInput.invokeMethod('TextInput.hide');
-        _focusNode.unfocus();
-      }
-    });
+  Future<void> setNotRobot({bool? clearData = false}) async {
+    await Navigator.pushNamed(context, "/not-a-robot", arguments: {"clearData": clearData});
   }
 
-  void setNotRobot() {
-    Navigator.pushNamed(context, "/not-a-robot");
-  }
-
-  void getData() async {
+  void getInitialData() async {
     await _userData.loadDataFromFile();
 
     final cookies = _userData.cookies;
     final userAgent = _userData.userAgent;
 
     if (cookies == null || cookies.isEmpty || userAgent == null || userAgent.isEmpty) {
-      return setNotRobot();
+      await setNotRobot();
+      return getInitialData();
     }
-
     final api = nh.API(
       //   'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) FxQuantum/114.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36',
       userAgent: userAgent,
@@ -64,19 +50,26 @@ class _BrowseViewState extends State<BrowseView> {
       ),
     );
 
-    try {
-      /// Throws if book is not found, or parse failed, see docs.
-      final nh.Book book = await api.getBook(177013);
+    setState(() {
+      _api = api;
+    });
 
-      // Short book summary
-      debugPrint(
-        'Book: $book\n'
-        'Artists: ${book.tags.artists.join(', ')}\n'
-        'Languages: ${book.tags.languages.join(', ')}\n'
-        'Cover: ${book.cover.getUrl(api: api)}\n'
-        'First page: ${book.pages.first.getUrl(api: api)}\n'
-        'First page thumbnail: ${book.pages.first.thumbnail.getUrl(api: api)}\n',
-      );
+    try {
+      // get 1 page of the most recent books
+      final Stream<nh.Search> recentBooks = _api.search("*", count: 1);
+
+      try {
+        await for (nh.Search search in recentBooks) {
+          setState(() {
+            _recentBooks = search.books;
+          });
+
+          break;
+        }
+      } catch (error) {
+        // Handle any errors that occur during the stream
+        debugPrint('Error: $error');
+      }
     } on nh.ApiClientException catch (e) {
       debugPrint('originalException ${e.originalException}');
       debugPrint('message ${e.message}');
@@ -86,7 +79,33 @@ class _BrowseViewState extends State<BrowseView> {
       debugPrint('method ${e.request?.method}');
       debugPrint('headers ${e.request?.headers}');
       debugPrint('url ${e.request?.url}');
+      print("lol 4");
+
+      await setNotRobot(clearData: true);
+      return getInitialData();
+    } catch (e) {
+      print("lol 5");
+      await setNotRobot(clearData: true);
+      return getInitialData();
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    getInitialData();
+
+    var keyboardVisibilityController = KeyboardVisibilityController();
+
+    // Subscribe
+    keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
+      //   print('Keyboard visibility update. Is visible: $visible');
+      if (!visible) {
+        // SystemChannels.textInput.invokeMethod('TextInput.hide');
+        _focusNode.unfocus();
+      }
+    });
   }
 
   @override
@@ -104,48 +123,57 @@ class _BrowseViewState extends State<BrowseView> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      MaterialButton(
-                        onPressed: buttonsDisabled ? null : getData,
-                        child: const Text('Get data'),
-                      ),
-                      MaterialButton(
-                        onPressed: buttonsDisabled ? null : setNotRobot,
-                        child: const Text('Fetch Tokens'),
-                      ),
-                    ],
+                  //   Row(
+                  //     children: [
+                  //       MaterialButton(
+                  //         onPressed: _buttonsDisabled ? null : getData,
+                  //         child: const Text('Get data'),
+                  //       ),
+                  //       MaterialButton(
+                  //         onPressed: _buttonsDisabled ? null : setNotRobot,
+                  //         child: const Text('Fetch Tokens'),
+                  //       ),
+                  //     ],
+                  //   ),
+                  ListView.builder(
+                    shrinkWrap: true, // Allow the ListView to take only the space it needs
+                    physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the ListView
+                    itemCount: _recentBooks.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      //   nh.Book item = _recentBooks[index];
+
+                      if (index % 2 == 0) {
+                        // Create a new row after every 2nd item
+                        return Row(
+                          children: [
+                            BookCoverWidget(
+                              book: _recentBooks[index],
+                              api: _api,
+                              lastBookFullWidth: index == _recentBooks.length - 1,
+                            ),
+                            if (index + 1 < _recentBooks.length)
+                              BookCoverWidget(
+                                book: _recentBooks[index + 1],
+                                api: _api,
+                              ),
+                          ],
+                        );
+                      } else {
+                        // Skip rendering for odd-indexed items
+                        return Row(
+                          children: [
+                            Container(),
+                          ],
+                        );
+                      }
+                    },
                   ),
-                  const Row(
+                  /* const Row(
                     children: [
                       BookCoverWidget(),
                       BookCoverWidget(),
                     ],
-                  ),
-                  const Row(
-                    children: [
-                      BookCoverWidget(),
-                      BookCoverWidget(),
-                    ],
-                  ),
-                  const Row(
-                    children: [
-                      BookCoverWidget(),
-                      BookCoverWidget(),
-                    ],
-                  ),
-                  const Row(
-                    children: [
-                      BookCoverWidget(),
-                      BookCoverWidget(),
-                    ],
-                  ),
-                  const Row(
-                    children: [
-                      BookCoverWidget(),
-                      BookCoverWidget(),
-                    ],
-                  ),
+                  ), */
                   const SizedBox(height: 40),
                 ],
               ),

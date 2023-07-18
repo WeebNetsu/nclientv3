@@ -19,14 +19,33 @@ class NotARobotView extends StatefulWidget {
 
 class _NotARobotViewState extends State<NotARobotView> {
   late WebViewController controller;
-
-  void goHome() {
-    Navigator.pop(context);
-  }
+  Map<String, dynamic>? arguments;
+  bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
+    // Retrieve the arguments in the addPostFrameCallback callback
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+      setState(() {
+        _initialized = true;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_initialized) {
+      return Scaffold(
+        // Placeholder widget while waiting for initialization to complete
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    final clearData = arguments?['clearData'];
 
     String? userAgent;
 
@@ -38,15 +57,11 @@ class _NotARobotViewState extends State<NotARobotView> {
       })
       ..setNavigationDelegate(
         NavigationDelegate(
-          // onProgress: (int progress) {
-          // Update loading bar.
-          // },
           onPageStarted: (String url) async {
-            // final WebViewCookieManager cookieManager = WebViewCookieManager();
-            // await cookieManager.platform.clearCookies();
-            // final currentUserAgent = await WebViewController().runJavaScriptReturningResult('navigator.userAgent');
-            // _newUserData.userAgent = currentUserAgent.toString();
-            // debugPrint(currentUserAgent.toString());
+            if (clearData) {
+              final WebViewCookieManager cookieManager = WebViewCookieManager();
+              await cookieManager.clearCookies();
+            }
           },
           onUrlChange: (change) async {
             if (change.url == NHentaiConstants.url) {
@@ -59,32 +74,18 @@ class _NotARobotViewState extends State<NotARobotView> {
               newUserData.cookies = gotCookies;
               final success = await newUserData.saveToFileData();
 
-              debugPrint(gotCookies.toString());
-
               if (!success || userAgent == null || userAgent == 'null' || gotCookies.toString() == '[]') {
-                // todo show error
                 debugPrint("Could not save user data");
                 return;
               }
 
-              return goHome();
+              Navigator.pop(context);
             }
           },
-          // onPageFinished: (String url) async {},
-          // onWebResourceError: (WebResourceError error) {},
-          // onNavigationRequest: (NavigationRequest request) {
-          //   if (request.url.startsWith('https://www.youtube.com/')) {
-          //     return NavigationDecision.prevent;
-          //   }
-          //   return NavigationDecision.navigate;
-          // },
         ),
       )
       ..loadRequest(Uri.parse(NHentaiConstants.url));
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: WebViewWidget(controller: controller),
     );

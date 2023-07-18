@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:nclientv3/constants/constants.dart';
+import 'package:nhentai/nhentai.dart' as nh;
 
 class BookCoverWidget extends StatelessWidget {
+  final nh.Book _book;
+  final nh.API _api;
+
+  /// if this is the last book on the page, and it can stretch
+  /// the full width of the page, then we can apply special
+  /// styling
+  final bool _lastBookFullWidth;
+
   const BookCoverWidget({
     super.key,
-  });
+    required nh.Book book,
+    required nh.API api,
+    bool lastBookFullWidth = false,
+  })  : _book = book,
+        _api = api,
+        _lastBookFullWidth = lastBookFullWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -30,23 +43,27 @@ class BookCoverWidget extends StatelessWidget {
                             //   double stackWidth = constraints.maxWidth;
                             return Stack(
                               children: [
-                                // change to network when getting cover from online
-                                Image.asset(
-                                  AssetConstants.coverImagePath,
+                                Image.network(
+                                  _book.thumbnail.getUrl(api: _api).toString(),
                                 ),
+                                // : Image.asset(
+                                //     AssetConstants.coverImagePath,
+                                //   ),
                                 Positioned(
                                   bottom: 0,
                                   child: Container(
                                     color: Colors.black.withOpacity(0.5),
                                     width: paddingWidth,
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(5),
+                                    child: Padding(
+                                      padding: _lastBookFullWidth
+                                          ? const EdgeInsets.fromLTRB(5, 5, 5, 35)
+                                          : const EdgeInsets.all(5),
                                       child: Text(
-                                        'Voluptate nulla aliqua ea voluptate id duis eiusmod eiusmod labore veniam sunt velit.',
+                                        _book.title.english ?? _book.title.japanese ?? "No title?",
                                         softWrap: true,
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 14,
+                                          fontSize: _lastBookFullWidth ? 20 : 14,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
