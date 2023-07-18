@@ -14,7 +14,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'NClient V3',
       theme: AppTheme.theme,
-      //   home: const NotARobotView(),
       routes: routes,
     );
   }

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:nclientv3/models/models.dart';
-import 'package:nclientv3/widgets/book_cover_widget.dart';
+import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/before_request_add_cookies.dart';
 import 'package:nhentai/nhentai.dart' as nh;
 
@@ -20,10 +23,23 @@ class BrowseView extends StatefulWidget {
 class _BrowseViewState extends State<BrowseView> {
   final _userData = UserDataModel();
   final buttonsDisabled = true;
+  final FocusNode _focusNode = FocusNode();
+  late StreamSubscription<bool> keyboardSubscription;
 
   @override
   void initState() {
     super.initState();
+
+    var keyboardVisibilityController = KeyboardVisibilityController();
+
+    // Subscribe
+    keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
+      print('Keyboard visibility update. Is visible: $visible');
+      if (!visible) {
+        // SystemChannels.textInput.invokeMethod('TextInput.hide');
+        _focusNode.unfocus();
+      }
+    });
   }
 
   void setNotRobot() {
@@ -80,58 +96,63 @@ class _BrowseViewState extends State<BrowseView> {
       // In Flutter, SingleChildScrollView is a widget that allows its child to be scrolled
       // in a single axis (either horizontally or vertically). It's often used to enable scrolling
       // for a widget that would otherwise overflow the screen.
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Row(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
                 children: [
-                  MaterialButton(
-                    onPressed: buttonsDisabled ? null : getData,
-                    child: const Text('Get data'),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      MaterialButton(
+                        onPressed: buttonsDisabled ? null : getData,
+                        child: const Text('Get data'),
+                      ),
+                      MaterialButton(
+                        onPressed: buttonsDisabled ? null : setNotRobot,
+                        child: const Text('Fetch Tokens'),
+                      ),
+                    ],
                   ),
-                  MaterialButton(
-                    onPressed: buttonsDisabled ? null : setNotRobot,
-                    child: const Text('Fetch Tokens'),
+                  const Row(
+                    children: [
+                      BookCoverWidget(),
+                      BookCoverWidget(),
+                    ],
                   ),
+                  const Row(
+                    children: [
+                      BookCoverWidget(),
+                      BookCoverWidget(),
+                    ],
+                  ),
+                  const Row(
+                    children: [
+                      BookCoverWidget(),
+                      BookCoverWidget(),
+                    ],
+                  ),
+                  const Row(
+                    children: [
+                      BookCoverWidget(),
+                      BookCoverWidget(),
+                    ],
+                  ),
+                  const Row(
+                    children: [
+                      BookCoverWidget(),
+                      BookCoverWidget(),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
                 ],
               ),
-              const Row(
-                children: [
-                  BookCoverWidget(),
-                  BookCoverWidget(),
-                ],
-              ),
-              const Row(
-                children: [
-                  BookCoverWidget(),
-                  BookCoverWidget(),
-                ],
-              ),
-              const Row(
-                children: [
-                  BookCoverWidget(),
-                  BookCoverWidget(),
-                ],
-              ),
-              const Row(
-                children: [
-                  BookCoverWidget(),
-                  BookCoverWidget(),
-                ],
-              ),
-              const Row(
-                children: [
-                  BookCoverWidget(),
-                  BookCoverWidget(),
-                ],
-              ),
-              const SizedBox(height: 40),
-            ],
+            ),
           ),
-        ),
+          BottomSearchBarWidget(focusNode: _focusNode),
+        ],
       ),
     );
   }
