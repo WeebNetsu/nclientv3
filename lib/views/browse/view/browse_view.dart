@@ -3,12 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:nclientv3/models/models.dart';
-import 'package:nclientv3/views/browse/widgets/unknown_error_widget.dart';
+import 'package:nclientv3/views/browse/widgets/error_page_widget.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/before_request_add_cookies.dart';
 import 'package:nhentai/nhentai.dart' as nh;
-
-import '../widgets/api_down_error_widget.dart';
 
 class BrowseView extends StatefulWidget {
   const BrowseView({super.key});
@@ -119,7 +117,11 @@ class _BrowseViewState extends State<BrowseView> {
 
   @override
   Widget build(BuildContext context) {
-    if (_apiDownError) return const ApiDownErrorWidget();
+    if (_apiDownError) {
+      return const ErrorPageWidget(
+        text: "Something went wrong, the API seems to be down",
+      );
+    }
 
     return Scaffold(
       //   appBar: appBar,
@@ -137,7 +139,7 @@ class _BrowseViewState extends State<BrowseView> {
           } else if (snapshot.hasError) {
             debugPrint("Error occurred: ${snapshot.error}");
             // Handle any error that occurred during the future execution
-            return const UnknownErrorWidget(text: "Could not fetch the books, I am broken!");
+            return const ErrorPageWidget(text: "Could not fetch the books, I am broken!");
           }
 
           return Stack(

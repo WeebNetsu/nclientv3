@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class ApiDownErrorWidget extends StatelessWidget {
-  const ApiDownErrorWidget({
-    super.key,
-  });
+class ErrorPageWidget extends StatelessWidget {
+  final String _text;
+
+  const ErrorPageWidget({super.key, String text = "An unknown error has just ocurred, sorry friend!"}) : _text = text;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class ApiDownErrorWidget extends StatelessWidget {
               width: 100,
             ),
             const SizedBox(height: 20),
-            const Text("Something went wrong, the API seems to be down"),
+            Text(_text),
           ],
         ),
       ),
