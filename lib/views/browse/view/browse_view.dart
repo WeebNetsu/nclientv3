@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:nclientv3/models/models.dart';
+import 'package:nclientv3/views/browse/widgets/unknown_error_widget.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/before_request_add_cookies.dart';
 import 'package:nhentai/nhentai.dart' as nh;
@@ -24,18 +25,20 @@ class BrowseView extends StatefulWidget {
 
 class _BrowseViewState extends State<BrowseView> {
   final _userData = UserDataModel();
-//   final _buttonsDisabled = DevConstants.releaseMode;
-  late nh.API _api;
-  List<nh.Book> _recentBooks = [];
   final FocusNode _focusNode = FocusNode();
+
+  late nh.API _api;
   late StreamSubscription<bool> keyboardSubscription;
+
   bool _apiDownError = false;
+  late Future<void> _loadingBooks;
+  List<nh.Book> _recentBooks = [];
 
   Future<void> setNotRobot({bool? clearData = false}) async {
     await Navigator.pushNamed(context, "/not-a-robot", arguments: {"clearData": clearData});
   }
 
-  void getInitialData() async {
+  Future<void> fetchBooks() async {
     await _userData.loadDataFromFile();
 
     final cookies = _userData.cookies;
@@ -43,8 +46,9 @@ class _BrowseViewState extends State<BrowseView> {
 
     if (cookies == null || cookies.isEmpty || userAgent == null || userAgent.isEmpty) {
       await setNotRobot();
-      return getInitialData();
+      return fetchBooks();
     }
+
     final api = nh.API(
       //   'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) FxQuantum/114.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36',
       userAgent: userAgent,
@@ -88,10 +92,10 @@ class _BrowseViewState extends State<BrowseView> {
       debugPrint('url ${e.request?.url}');
 
       await setNotRobot(clearData: true);
-      return getInitialData();
+      return fetchBooks();
     } catch (e) {
       await setNotRobot(clearData: true);
-      return getInitialData();
+      return fetchBooks();
     }
   }
 
@@ -99,7 +103,7 @@ class _BrowseViewState extends State<BrowseView> {
   void initState() {
     super.initState();
 
-    getInitialData();
+    _loadingBooks = fetchBooks();
 
     var keyboardVisibilityController = KeyboardVisibilityController();
 
@@ -122,52 +126,68 @@ class _BrowseViewState extends State<BrowseView> {
       // In Flutter, SingleChildScrollView is a widget that allows its child to be scrolled
       // in a single axis (either horizontally or vertically). It's often used to enable scrolling
       // for a widget that would otherwise overflow the screen.
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  ListView.builder(
-                    shrinkWrap: true, // Allow the ListView to take only the space it needs
-                    physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the ListView
-                    itemCount: _recentBooks.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (index % 2 == 0) {
-                        // Create a new row after every 2nd item
-                        return Row(
-                          children: [
-                            BookCoverWidget(
-                              book: _recentBooks[index],
-                              api: _api,
-                              lastBookFullWidth: index == _recentBooks.length - 1,
-                            ),
-                            if (index + 1 < _recentBooks.length)
-                              BookCoverWidget(
-                                book: _recentBooks[index + 1],
-                                api: _api,
-                              ),
-                          ],
-                        );
-                      } else {
-                        // Skip rendering for odd-indexed items
-                        return Row(
-                          children: [
-                            Container(),
-                          ],
-                        );
-                      }
-                    },
+      body: FutureBuilder<void>(
+        future: _loadingBooks,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Display a loader while the future is executing
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            debugPrint("Error occurred: ${snapshot.error}");
+            // Handle any error that occurred during the future execution
+            return const UnknownErrorWidget(text: "Could not fetch the books, I am broken!");
+          }
+
+          return Stack(
+            children: [
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      ListView.builder(
+                        shrinkWrap: true, // Allow the ListView to take only the space it needs
+                        physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the ListView
+                        itemCount: _recentBooks.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (index % 2 == 0) {
+                            // Create a new row after every 2nd item
+                            return Row(
+                              children: [
+                                BookCoverWidget(
+                                  book: _recentBooks[index],
+                                  api: _api,
+                                  lastBookFullWidth: index == _recentBooks.length - 1,
+                                ),
+                                if (index + 1 < _recentBooks.length)
+                                  BookCoverWidget(
+                                    book: _recentBooks[index + 1],
+                                    api: _api,
+                                  ),
+                              ],
+                            );
+                          } else {
+                            // Skip rendering for odd-indexed items
+                            return Row(
+                              children: [
+                                Container(),
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 40),
+                    ],
                   ),
-                  const SizedBox(height: 40),
-                ],
+                ),
               ),
-            ),
-          ),
-          BottomSearchBarWidget(focusNode: _focusNode),
-        ],
+              BottomSearchBarWidget(focusNode: _focusNode),
+            ],
+          );
+        },
       ),
     );
   }

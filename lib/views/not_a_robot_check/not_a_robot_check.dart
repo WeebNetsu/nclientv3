@@ -37,7 +37,7 @@ class _NotARobotViewState extends State<NotARobotView> {
   @override
   Widget build(BuildContext context) {
     if (!_initialized) {
-      return Scaffold(
+      return const Scaffold(
         // Placeholder widget while waiting for initialization to complete
         body: Center(
           child: CircularProgressIndicator(),
