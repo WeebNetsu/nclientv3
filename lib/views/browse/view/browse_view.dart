@@ -7,6 +7,8 @@ import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/before_request_add_cookies.dart';
 import 'package:nhentai/nhentai.dart' as nh;
 
+import '../widgets/api_down_error_widget.dart';
+
 class BrowseView extends StatefulWidget {
   const BrowseView({super.key});
 
@@ -27,6 +29,7 @@ class _BrowseViewState extends State<BrowseView> {
   List<nh.Book> _recentBooks = [];
   final FocusNode _focusNode = FocusNode();
   late StreamSubscription<bool> keyboardSubscription;
+  bool _apiDownError = false;
 
   Future<void> setNotRobot({bool? clearData = false}) async {
     await Navigator.pushNamed(context, "/not-a-robot", arguments: {"clearData": clearData});
@@ -66,6 +69,10 @@ class _BrowseViewState extends State<BrowseView> {
 
           break;
         }
+      } on nh.ApiException catch (e) {
+        setState(() {
+          _apiDownError = true;
+        });
       } catch (error) {
         // Handle any errors that occur during the stream
         debugPrint('Error: $error');
@@ -79,12 +86,10 @@ class _BrowseViewState extends State<BrowseView> {
       debugPrint('method ${e.request?.method}');
       debugPrint('headers ${e.request?.headers}');
       debugPrint('url ${e.request?.url}');
-      print("lol 4");
 
       await setNotRobot(clearData: true);
       return getInitialData();
     } catch (e) {
-      print("lol 5");
       await setNotRobot(clearData: true);
       return getInitialData();
     }
@@ -110,6 +115,8 @@ class _BrowseViewState extends State<BrowseView> {
 
   @override
   Widget build(BuildContext context) {
+    if (_apiDownError) return const ApiDownErrorWidget();
+
     return Scaffold(
       //   appBar: appBar,
       // In Flutter, SingleChildScrollView is a widget that allows its child to be scrolled
@@ -123,25 +130,11 @@ class _BrowseViewState extends State<BrowseView> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  //   Row(
-                  //     children: [
-                  //       MaterialButton(
-                  //         onPressed: _buttonsDisabled ? null : getData,
-                  //         child: const Text('Get data'),
-                  //       ),
-                  //       MaterialButton(
-                  //         onPressed: _buttonsDisabled ? null : setNotRobot,
-                  //         child: const Text('Fetch Tokens'),
-                  //       ),
-                  //     ],
-                  //   ),
                   ListView.builder(
                     shrinkWrap: true, // Allow the ListView to take only the space it needs
                     physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the ListView
                     itemCount: _recentBooks.length,
                     itemBuilder: (BuildContext context, int index) {
-                      //   nh.Book item = _recentBooks[index];
-
                       if (index % 2 == 0) {
                         // Create a new row after every 2nd item
                         return Row(
@@ -168,12 +161,6 @@ class _BrowseViewState extends State<BrowseView> {
                       }
                     },
                   ),
-                  /* const Row(
-                    children: [
-                      BookCoverWidget(),
-                      BookCoverWidget(),
-                    ],
-                  ), */
                   const SizedBox(height: 40),
                 ],
               ),
