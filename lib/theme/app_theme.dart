@@ -11,5 +11,8 @@ class AppTheme {
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: Palette.blueColor,
     ),
+    textTheme: const TextTheme(
+      bodyMedium: TextStyle(fontSize: 16), // Set the default text size here
+    ),
   );
 }

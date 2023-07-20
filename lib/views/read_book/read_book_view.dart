@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nclientv3/utils/utils.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/nhentai.dart' as nh;
+import 'package:random_string/random_string.dart';
 
 class ReadBookView extends StatefulWidget {
   const ReadBookView({super.key});
@@ -89,29 +91,80 @@ class _ReadBookViewState extends State<ReadBookView> {
             return const ErrorPageWidget(text: "Could not fetch the books, I am broken!");
           }
 
+          final book = _book!;
+          final bookTags = book.tags.map((e) => e.name).toList().join(', ');
+
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
+            child: ListView(
               children: [
                 const SizedBox(height: 20),
-                Expanded(
-                  child: ListView.builder(
-                    shrinkWrap: true, // Allow the ListView to take only the space it needs
-                    // physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the ListView
-                    itemCount: _book!.pages.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final page = _book!.pages[index];
-
-                      // Create a new row after every 2nd item
-                      return Container(
-                        child: BookPageWidget(
-                          api: _api!,
-                          page: page,
-                          bookName: _book!.title.english ?? _book!.title.japanese ?? "No title",
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        book.title.english ?? book.title.japanese ?? "OwO! No title?!",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
-                      );
-                    },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Code: ",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "${book.id}",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Pages: ${book.pages.length}"),
+                            Text("Favorites: ${book.favorites}"),
+                          ],
+                        ),
+                      ),
+                      Text("Tags: $bookTags"),
+                      const SizedBox(height: 10),
+                      Center(
+                        child: Text("Uploaded On: ${formatDateToString(book.uploaded)}"),
+                      ),
+                    ],
                   ),
+                ),
+                ListView.builder(
+                  shrinkWrap: true, // Allow the ListView to take only the space it needs
+                  physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the ListView
+                  itemCount: book.pages.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final page = book.pages[index];
+
+                    // Create a new row after every 2nd item
+                    return BookPageWidget(
+                      api: _api!,
+                      page: page,
+                      bookName: book.title.english ?? randomAlphaNumeric(15),
+                    );
+                  },
                 ),
                 const SizedBox(height: 40),
               ],

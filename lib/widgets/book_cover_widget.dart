@@ -44,7 +44,7 @@ class BookCoverWidget extends StatelessWidget {
                             return Stack(
                               children: [
                                 FadeInImage(
-                                  placeholder: AssetImage('assets/images/cover_loader.jpg'), // Placeholder image
+                                  placeholder: const AssetImage('assets/images/cover_loader.jpg'), // Placeholder image
                                   image: Image.network(
                                     _book.thumbnail.getUrl(api: _api).toString(),
                                   ).image,
