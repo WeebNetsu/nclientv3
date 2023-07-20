@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:nclientv3/utils/utils.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/nhentai.dart' as nh;
@@ -24,6 +25,7 @@ class _ReadBookViewState extends State<ReadBookView> {
   int? _bookId;
   nh.API? _api;
   nh.Book? _book;
+  int _visiblePages = 3;
 
   Future<void> fetchBook() async {
     if (_bookId == null || _api == null) {
@@ -62,6 +64,8 @@ class _ReadBookViewState extends State<ReadBookView> {
 
   @override
   Widget build(BuildContext context) {
+    // final scrollController = ScrollController();
+
     if (_errorMessage != null) {
       return const ErrorPageWidget();
     }
@@ -73,10 +77,6 @@ class _ReadBookViewState extends State<ReadBookView> {
     }
 
     return Scaffold(
-      //   appBar: appBar,
-      // In Flutter, SingleChildScrollView is a widget that allows its child to be scrolled
-      // in a single axis (either horizontally or vertically). It's often used to enable scrolling
-      // for a widget that would otherwise overflow the screen.
       body: FutureBuilder<void>(
         future: _loadingBook,
         builder: (context, snapshot) {
@@ -96,78 +96,86 @@ class _ReadBookViewState extends State<ReadBookView> {
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: ListView(
-              children: [
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        book.title.english ?? book.title.japanese ?? "OwO! No title?!",
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+            child: LazyLoadScrollView(
+              onEndOfPage: () {
+                setState(() {
+                  _visiblePages += 5;
+                });
+              },
+              child: ListView(
+                children: [
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          book.title.english ?? book.title.japanese ?? "OwO! No title?!",
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "Code: ",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Code: ",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            Text(
-                              "${book.id}",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                              Text(
+                                "${book.id}",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Pages: ${book.pages.length}"),
-                            Text("Favorites: ${book.favorites}"),
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Pages: ${book.pages.length}"),
+                              Text("Favorites: ${book.favorites}"),
+                            ],
+                          ),
                         ),
-                      ),
-                      Text("Tags: $bookTags"),
-                      const SizedBox(height: 10),
-                      Center(
-                        child: Text("Uploaded On: ${formatDateToString(book.uploaded)}"),
-                      ),
-                    ],
+                        Text("Tags: $bookTags"),
+                        const SizedBox(height: 10),
+                        Center(
+                          child: Text("Uploaded On: ${formatDateToString(book.uploaded)}"),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                ListView.builder(
-                  shrinkWrap: true, // Allow the ListView to take only the space it needs
-                  physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the ListView
-                  itemCount: book.pages.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final page = book.pages[index];
 
-                    // Create a new row after every 2nd item
-                    return BookPageWidget(
-                      api: _api!,
-                      page: page,
-                      bookName: book.title.english ?? randomAlphaNumeric(15),
-                    );
-                  },
-                ),
-                const SizedBox(height: 40),
-              ],
+                  // the actual doujin content
+                  ListView.builder(
+                    shrinkWrap: true, // Allow the ListView to take only the space it needs
+                    physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the ListView
+                    itemCount: book.pages.length > _visiblePages ? _visiblePages : book.pages.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final page = book.pages[index];
+
+                      return BookPageWidget(
+                        api: _api!,
+                        page: page,
+                        bookName: book.title.english ?? randomAlphaNumeric(15),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
           );
         },

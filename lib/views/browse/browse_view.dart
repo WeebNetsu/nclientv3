@@ -31,7 +31,7 @@ class _BrowseViewState extends State<BrowseView> {
 
   bool _apiDownError = false;
   late Future<void> _loadingBooks;
-  List<nh.Book> _recentBooks = [];
+  List<nh.Book> _bookList = [];
 
   Future<void> setNotRobot({bool? clearData = false}) async {
     await Navigator.pushNamed(context, "/not-a-robot", arguments: {"clearData": clearData});
@@ -62,16 +62,12 @@ class _BrowseViewState extends State<BrowseView> {
 
     try {
       // get 1 page of the most recent books
-      final Stream<nh.Search> recentBooks = _api.search("*", count: 1);
+      final nh.Search searchedBooks = await _api.searchSinglePage("*", sort: nh.SearchSort.popularWeek);
 
       try {
-        await for (nh.Search search in recentBooks) {
-          setState(() {
-            _recentBooks = search.books;
-          });
-
-          break;
-        }
+        setState(() {
+          _bookList = searchedBooks.books;
+        });
       } on nh.ApiException {
         setState(() {
           _apiDownError = true;
@@ -172,20 +168,20 @@ class _BrowseViewState extends State<BrowseView> {
                       ListView.builder(
                         shrinkWrap: true, // Allow the ListView to take only the space it needs
                         physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the ListView
-                        itemCount: _recentBooks.length,
+                        itemCount: _bookList.length,
                         itemBuilder: (BuildContext context, int index) {
                           if (index % 2 == 0) {
                             // Create a new row after every 2nd item
                             return Row(
                               children: [
                                 BookCoverWidget(
-                                  book: _recentBooks[index],
+                                  book: _bookList[index],
                                   api: _api,
-                                  lastBookFullWidth: index == _recentBooks.length - 1,
+                                  lastBookFullWidth: index == _bookList.length - 1,
                                 ),
-                                if (index + 1 < _recentBooks.length)
+                                if (index + 1 < _bookList.length)
                                   BookCoverWidget(
-                                    book: _recentBooks[index + 1],
+                                    book: _bookList[index + 1],
                                     api: _api,
                                   ),
                               ],

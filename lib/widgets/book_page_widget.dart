@@ -77,8 +77,11 @@ class _BookPageWidgetState extends State<BookPageWidget> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Display a loader while waiting for the async operation to complete
-          return const Center(
-            child: CircularProgressIndicator(),
+          return Container(
+            height: 500,
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         } else if (snapshot.hasError) {
           // Handle any errors that occurred during the async operation
