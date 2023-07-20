@@ -29,7 +29,7 @@ class BookCoverWidget extends StatelessWidget {
             // double expandedWidth = constraints.maxWidth;
             return GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, "/read");
+                Navigator.pushNamed(context, "/read", arguments: {"bookId": _book.id, "api": _api});
               },
               child: Stack(
                 children: [
@@ -46,9 +46,6 @@ class BookCoverWidget extends StatelessWidget {
                                 Image.network(
                                   _book.thumbnail.getUrl(api: _api).toString(),
                                 ),
-                                // : Image.asset(
-                                //     AssetConstants.coverImagePath,
-                                //   ),
                                 Positioned(
                                   bottom: 0,
                                   child: Container(

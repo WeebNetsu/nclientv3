@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:nclientv3/models/models.dart';
-import 'package:nclientv3/views/browse/widgets/error_page_widget.dart';
+import 'package:nclientv3/widgets/error_page_widget.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/before_request_add_cookies.dart';
 import 'package:nhentai/nhentai.dart' as nh;

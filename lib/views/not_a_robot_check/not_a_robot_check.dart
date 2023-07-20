@@ -26,7 +26,7 @@ class _NotARobotViewState extends State<NotARobotView> {
   void initState() {
     super.initState();
     // Retrieve the arguments in the addPostFrameCallback callback
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
       setState(() {
         _initialized = true;
