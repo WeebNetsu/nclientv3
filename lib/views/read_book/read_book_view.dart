@@ -107,6 +107,7 @@ class _ReadBookViewState extends State<ReadBookView> {
                         child: BookPageWidget(
                           api: _api!,
                           page: page,
+                          bookName: _book!.title.english ?? _book!.title.japanese ?? "No title",
                         ),
                       );
                     },

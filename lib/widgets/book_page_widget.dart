@@ -2,19 +2,23 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:nclientv3/utils/utils.dart';
 import 'package:nhentai/nhentai.dart' as nh;
 import 'package:path_provider/path_provider.dart';
 
 class BookPageWidget extends StatefulWidget {
   final nh.Image _page;
   final nh.API _api;
+  final String _bookName;
 
   const BookPageWidget({
     super.key,
     required nh.Image page,
     required nh.API api,
+    required String bookName,
   })  : _page = page,
-        _api = api;
+        _api = api,
+        _bookName = bookName;
 
   @override
   State<BookPageWidget> createState() => _BookPageWidgetState();
@@ -25,12 +29,12 @@ class _BookPageWidgetState extends State<BookPageWidget> {
   File? _image;
 
   Future<File> downloadImage({int retries = 0}) async {
-    final directory = await getTemporaryDirectory(); // Change this to your desired directory
-    final file = File('${directory.path}/${widget._page.filename}'); // Change the file name and extension as needed
+    final directory = await getTemporaryDirectory();
+    final dirName = '${directory.path}/${makeFilenameSafe(widget._bookName)}';
+    final fileName = '$dirName/${makeFilenameSafe(widget._page.filename)}';
+    final file = File(fileName);
 
-    if (file.existsSync()) {
-      return file;
-    }
+    if (file.existsSync()) return file;
 
     final url = widget._page.getUrl(api: widget._api).toString();
 
@@ -38,8 +42,9 @@ class _BookPageWidgetState extends State<BookPageWidget> {
 
     if (response.statusCode == 200) {
       final bytes = response.bodyBytes;
-      final newFile =
-          File('${directory.path}/${widget._page.filename}'); // Change the file name and extension as needed
+      final newFile = File(fileName);
+      //   create file and folders if it does not exist
+      file.createSync(recursive: true);
       await newFile.writeAsBytes(bytes);
       return newFile;
     } else {
