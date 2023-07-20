@@ -70,7 +70,7 @@ class _BrowseViewState extends State<BrowseView> {
 
           break;
         }
-      } on nh.ApiException catch (e) {
+      } on nh.ApiException {
         setState(() {
           _apiDownError = true;
         });

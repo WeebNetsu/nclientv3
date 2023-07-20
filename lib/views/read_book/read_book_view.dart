@@ -90,10 +90,10 @@ class _ReadBookViewState extends State<ReadBookView> {
           }
 
           return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true, // Allow the ListView to take only the space it needs
@@ -113,7 +113,7 @@ class _ReadBookViewState extends State<ReadBookView> {
                     },
                   ),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
               ],
             ),
           );

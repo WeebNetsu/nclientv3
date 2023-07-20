@@ -35,16 +35,18 @@ class _SearchViewState extends State<SearchView> {
       return;
     }
 
-    final Stream<nh.Search> searchedBooks = (api ?? _api)!.search(text, count: 1);
-
     try {
-      await for (nh.Search search in searchedBooks) {
-        setState(() {
-          _searchedBooks = search.books;
-        });
+      final code = int.tryParse(text);
 
-        break;
+      if (code != null) {
+        Navigator.pushNamed(context, "/read", arguments: {"bookId": code, "api": _api});
       }
+
+      final nh.Search searchRes = await (api ?? _api)!.searchSinglePage(text);
+
+      setState(() {
+        _searchedBooks = searchRes.books;
+      });
     } catch (error) {
       // Handle any errors that occur during the stream
       debugPrint('Error: $error');
