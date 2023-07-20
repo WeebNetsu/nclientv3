@@ -6,6 +6,7 @@ import 'package:nclientv3/models/models.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/before_request_add_cookies.dart';
 import 'package:nhentai/nhentai.dart' as nh;
+import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 
 class BrowseView extends StatefulWidget {
   const BrowseView({super.key});
@@ -26,6 +27,7 @@ class _BrowseViewState extends State<BrowseView> {
 
   late nh.API _api;
   late StreamSubscription<bool> keyboardSubscription;
+  bool? _connectedToInternet;
 
   bool _apiDownError = false;
   late Future<void> _loadingBooks;
@@ -112,13 +114,31 @@ class _BrowseViewState extends State<BrowseView> {
         _focusNode.unfocus();
       }
     });
+
+    InternetConnectivity().hasInternetConnection.then((hasInternet) {
+      setState(() {
+        _connectedToInternet = hasInternet;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_connectedToInternet == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     if (_apiDownError) {
       return const ErrorPageWidget(
         text: "Something went wrong, the API seems to be down",
+      );
+    }
+
+    if (!_connectedToInternet!) {
+      return const ErrorPageWidget(
+        text: "Damn! I can't seem to connect to the internet!",
       );
     }
 

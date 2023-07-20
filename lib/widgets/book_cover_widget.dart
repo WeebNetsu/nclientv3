@@ -43,8 +43,11 @@ class BookCoverWidget extends StatelessWidget {
                             //   double stackWidth = constraints.maxWidth;
                             return Stack(
                               children: [
-                                Image.network(
-                                  _book.thumbnail.getUrl(api: _api).toString(),
+                                FadeInImage(
+                                  placeholder: AssetImage('assets/images/cover_loader.jpg'), // Placeholder image
+                                  image: Image.network(
+                                    _book.thumbnail.getUrl(api: _api).toString(),
+                                  ).image,
                                 ),
                                 Positioned(
                                   bottom: 0,
