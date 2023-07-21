@@ -36,9 +36,7 @@ class UserPreferencesModel {
     return false;
   }
 
-  /// Load cookie data. If `filePath` is provided, read sleep data from the provided path file,
-  ///
-  /// else read the data from our cookies.json in our app directory
+  /// Load data from file, if failed, it will return false
   Future<bool> loadDataFromFile() async {
     final Directory? appDir = await getAppDir();
 
@@ -46,13 +44,17 @@ class UserPreferencesModel {
 
     final File saveFile = File("${appDir.path}/$saveFileName");
 
-    if (!saveFile.existsSync()) return false;
+    if (!saveFile.existsSync()) {
+      sort = nh.SearchSort.popularWeek;
+      await saveToFileData();
+      return true;
+    }
 
     final saveData = await saveFile.readAsString();
     final userDataJson = jsonDecode(saveData);
 
     // not decoding it will leave quotes in the string
-    final String sortData = jsonDecode(userDataJson['sort'].toString());
+    final String sortData = userDataJson['sort'].toString();
 
     if (sortData == nh.SearchSort.recent.toString()) {
       sort = nh.SearchSort.recent;

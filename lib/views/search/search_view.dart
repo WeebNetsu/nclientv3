@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:nclientv3/constants/constants.dart';
+import 'package:nclientv3/models/models.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/nhentai.dart' as nh;
 
@@ -21,18 +22,24 @@ class SearchView extends StatefulWidget {
 
 class _SearchViewState extends State<SearchView> {
   final FocusNode _focusNode = FocusNode();
+  final _userPreferences = UserPreferencesModel();
+
   Map<String, dynamic>? arguments;
   String? _errorMessage;
-
   nh.API? _api;
-  late StreamSubscription<bool> keyboardSubscription;
-
-  late Future<void> _loadingBooks = searchBooks('*');
   List<nh.Book> _searchedBooks = [];
+  String? _lastSearchPrompt;
+
+  /// Similar to _loadingBooks, but does not store a function
+  bool _loading = false;
+
+  late StreamSubscription<bool> keyboardSubscription;
+  late Future<void> _loadingBooks = searchBooks('*');
 
   Future<void> searchBooks(String text, {nh.API? api}) async {
     setState(() {
       _errorMessage = null;
+      _lastSearchPrompt = text;
     });
 
     if (api == null && _api == null) {
@@ -41,13 +48,22 @@ class _SearchViewState extends State<SearchView> {
     }
 
     try {
+      setState(() {
+        _loading = true;
+      });
+
       final code = int.tryParse(text);
 
       if (code != null) {
         Navigator.pushNamed(context, "/read", arguments: {"bookId": code, "api": _api});
       }
 
-      final nh.Search searchRes = await (api ?? _api)!.searchSinglePage(text);
+      await _userPreferences.loadDataFromFile();
+
+      final nh.Search searchRes = await (api ?? _api)!.searchSinglePage(
+        text,
+        sort: _userPreferences.sort ?? nh.SearchSort.popular,
+      );
 
       setState(() {
         _searchedBooks = searchRes.books;
@@ -62,7 +78,15 @@ class _SearchViewState extends State<SearchView> {
       });
       // Handle any errors that occur during the stream
       debugPrint('Error: $error');
+    } finally {
+      setState(() {
+        _loading = false;
+      });
     }
+  }
+
+  Future<void> _reloadDataOnSpot() async {
+    await searchBooks(_lastSearchPrompt ?? '', api: _api);
   }
 
   @override
@@ -144,6 +168,12 @@ class _SearchViewState extends State<SearchView> {
             );
           }
 
+          if (_loading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
           return Stack(
             children: [
               SingleChildScrollView(
@@ -189,6 +219,7 @@ class _SearchViewState extends State<SearchView> {
               BottomSearchBarWidget(
                 focusNode: _focusNode,
                 handleSearch: searchBooks,
+                reloadData: _reloadDataOnSpot,
               ),
             ],
           );

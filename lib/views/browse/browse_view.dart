@@ -24,12 +24,16 @@ class BrowseView extends StatefulWidget {
 class _BrowseViewState extends State<BrowseView> {
   final _userData = UserDataModel();
   final FocusNode _focusNode = FocusNode();
+  final _userPreferences = UserPreferencesModel();
 
   late nh.API _api;
   late StreamSubscription<bool> keyboardSubscription;
   bool? _connectedToInternet;
 
   bool _apiDownError = false;
+
+  /// similar to loadingBooks, but does not store a function
+  bool _loading = false;
   late Future<void> _loadingBooks;
   List<nh.Book> _bookList = [];
 
@@ -58,11 +62,17 @@ class _BrowseViewState extends State<BrowseView> {
 
     setState(() {
       _api = api;
+      _loading = true;
     });
+
+    await _userPreferences.loadDataFromFile();
 
     try {
       // get 1 page of the most recent books
-      final nh.Search searchedBooks = await _api.searchSinglePage("*", sort: nh.SearchSort.popularWeek);
+      final nh.Search searchedBooks = await _api.searchSinglePage(
+        "*",
+        sort: _userPreferences.sort ?? nh.SearchSort.popularWeek,
+      );
 
       try {
         setState(() {
@@ -91,6 +101,10 @@ class _BrowseViewState extends State<BrowseView> {
     } catch (e) {
       await setNotRobot(clearData: true);
       return fetchBooks();
+    } finally {
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -153,6 +167,12 @@ class _BrowseViewState extends State<BrowseView> {
             return const MessagePageWidget(text: "Could not fetch the books, I am broken!");
           }
 
+          if (_loading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
           return Stack(
             children: [
               SingleChildScrollView(
@@ -197,7 +217,11 @@ class _BrowseViewState extends State<BrowseView> {
                   ),
                 ),
               ),
-              BottomSearchBarWidget(focusNode: _focusNode, api: _api),
+              BottomSearchBarWidget(
+                focusNode: _focusNode,
+                api: _api,
+                reloadData: fetchBooks,
+              ),
             ],
           );
         },
