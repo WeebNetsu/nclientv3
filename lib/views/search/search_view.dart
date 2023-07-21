@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:nclientv3/constants/constants.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/nhentai.dart' as nh;
 
@@ -30,6 +31,10 @@ class _SearchViewState extends State<SearchView> {
   List<nh.Book> _searchedBooks = [];
 
   Future<void> searchBooks(String text, {nh.API? api}) async {
+    setState(() {
+      _errorMessage = null;
+    });
+
     if (api == null && _api == null) {
       _errorMessage = "Did not get books or api... Coding bug, gomen!";
       return;
@@ -47,7 +52,14 @@ class _SearchViewState extends State<SearchView> {
       setState(() {
         _searchedBooks = searchRes.books;
       });
+    } on nh.ApiException {
+      setState(() {
+        _errorMessage = "Seems like a word is blacklisted by the API...";
+      });
     } catch (error) {
+      setState(() {
+        _errorMessage = "Oh no! An unknown error occurred, what a tragedy...";
+      });
       // Handle any errors that occur during the stream
       debugPrint('Error: $error');
     }
@@ -86,24 +98,50 @@ class _SearchViewState extends State<SearchView> {
       );
     }
 
+    if (_errorMessage != null) {
+      return Scaffold(
+        body: Stack(
+          children: [
+            MessagePageWidget(text: _errorMessage!),
+            BottomSearchBarWidget(
+              focusNode: _focusNode,
+              handleSearch: searchBooks,
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
-      //   appBar: appBar,
-      // In Flutter, SingleChildScrollView is a widget that allows its child to be scrolled
-      // in a single axis (either horizontally or vertically). It's often used to enable scrolling
-      // for a widget that would otherwise overflow the screen.
       body: FutureBuilder<void>(
         future: _loadingBooks,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Display a loader while the future is executing
-            print("Reached 103");
             return const Center(
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
             debugPrint("Error occurred: ${snapshot.error}");
             // Handle any error that occurred during the future execution
-            return const ErrorPageWidget(text: "Could not fetch the books, I am broken!");
+            return const MessagePageWidget(text: "Could not fetch the books, I am broken!");
+          }
+
+          if (_searchedBooks.isEmpty) {
+            return Scaffold(
+              body: Stack(
+                children: [
+                  const MessagePageWidget(
+                    text: "It's all empty here! No books were found.",
+                    statusEmoji: StatusEmojis.thinking,
+                  ),
+                  BottomSearchBarWidget(
+                    focusNode: _focusNode,
+                    handleSearch: searchBooks,
+                  ),
+                ],
+              ),
+            );
           }
 
           return Stack(
@@ -138,9 +176,7 @@ class _SearchViewState extends State<SearchView> {
                           } else {
                             // Skip rendering for odd-indexed items
                             return Row(
-                              children: [
-                                Container(),
-                              ],
+                              children: [Container()],
                             );
                           }
                         },

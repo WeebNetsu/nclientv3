@@ -24,7 +24,7 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
 
   @override
   void dispose() {
-    _searchText.dispose();
+    // _searchText.dispose();
     super.dispose();
   }
 
@@ -64,11 +64,9 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
                 fillColor: Colors.black,
                 border: const OutlineInputBorder(
                   borderSide: BorderSide.none, // Remove border
-                  // borderRadius: BorderRadius.circular(50),
                 ),
               ),
               keyboardType: TextInputType.text,
-              // TextField properties and event handlers
             ),
           ),
         ),

@@ -67,7 +67,7 @@ class _ReadBookViewState extends State<ReadBookView> {
     // final scrollController = ScrollController();
 
     if (_errorMessage != null) {
-      return const ErrorPageWidget();
+      return const MessagePageWidget();
     }
 
     if (_bookId == null || _api == null) {
@@ -88,7 +88,7 @@ class _ReadBookViewState extends State<ReadBookView> {
           } else if (snapshot.hasError) {
             debugPrint("Error occurred: ${snapshot.error}");
             // Handle any error that occurred during the future execution
-            return const ErrorPageWidget(text: "Could not fetch the books, I am broken!");
+            return const MessagePageWidget(text: "Could not fetch the books, I am broken!");
           }
 
           final book = _book!;
