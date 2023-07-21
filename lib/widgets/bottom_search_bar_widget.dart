@@ -29,6 +29,8 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
   }
 
   void handleSearch() async {
+    if (_searchText.text.isEmpty) return;
+
     if (widget._handleSearch != null) {
       widget._handleSearch!(_searchText.text);
     } else {
@@ -43,7 +45,7 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
       child: Align(
         alignment: Alignment.bottomCenter,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 13),
           child: Container(
             // Styling for the container that holds the TextField
             color: Colors.black,
@@ -56,9 +58,26 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
               decoration: InputDecoration(
                 labelText: 'Search for a doubjin',
                 hintText: '177013',
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: handleSearch,
+                prefixIcon: IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    // Handle left icon button tap
+                  },
+                ),
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: handleSearch,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.sort),
+                      onPressed: () {
+                        // Handle right icon button tap
+                      },
+                    ),
+                  ],
                 ),
                 filled: true,
                 fillColor: Colors.black,

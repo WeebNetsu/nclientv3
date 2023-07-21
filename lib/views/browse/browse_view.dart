@@ -139,10 +139,6 @@ class _BrowseViewState extends State<BrowseView> {
     }
 
     return Scaffold(
-      //   appBar: appBar,
-      // In Flutter, SingleChildScrollView is a widget that allows its child to be scrolled
-      // in a single axis (either horizontally or vertically). It's often used to enable scrolling
-      // for a widget that would otherwise overflow the screen.
       body: FutureBuilder<void>(
         future: _loadingBooks,
         builder: (context, snapshot) {
