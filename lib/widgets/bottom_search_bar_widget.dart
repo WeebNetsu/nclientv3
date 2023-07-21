@@ -73,95 +73,90 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 13),
           child: Container(
-            // Styling for the container that holds the TextField
             color: Colors.black,
-
-            child: TextField(
-              autofocus: false,
-              focusNode: widget._focusNode,
-              //   use the provided controller (so we don't change pages on search)
-              controller: _searchText,
-              decoration: InputDecoration(
-                labelText: 'Search for a doubjin',
-                hintText: '177013',
-                prefixIcon: IconButton(
+            child: Row(
+              children: [
+                IconButton(
                   icon: const Icon(Icons.settings),
-                  onPressed: () {
-                    // Handle left icon button tap
+                  onPressed: () {},
+                ),
+                Expanded(
+                  child: TextField(
+                    autofocus: false,
+                    focusNode: widget._focusNode,
+                    // use the provided controller (so we don't change pages on search)
+                    controller: _searchText,
+                    decoration: const InputDecoration(
+                      labelText: 'Search for a doujin',
+                      hintText: '177013',
+                      filled: true,
+                      fillColor: Colors.black,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none, // Remove border
+                      ),
+                    ),
+                    keyboardType: TextInputType.text,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: handleSearch,
+                ),
+                PopupMenuButton(
+                  child: const Icon(Icons.sort),
+                  itemBuilder: (_) {
+                    if (_loading) return [];
+
+                    return [
+                      PopupMenuItemModel(
+                        title: "Recent",
+                        value: _userPreferences.sort == nh.SearchSort.recent,
+                      ),
+                      PopupMenuItemModel(
+                        title: "Popular",
+                        value: _userPreferences.sort == nh.SearchSort.popular,
+                      ),
+                      PopupMenuItemModel(
+                        title: "Popular (Month)",
+                        value: _userPreferences.sort == nh.SearchSort.popularMonth,
+                      ),
+                      PopupMenuItemModel(
+                        title: "Popular (Week)",
+                        value: _userPreferences.sort == nh.SearchSort.popularWeek,
+                      ),
+                      PopupMenuItemModel(
+                        title: "Popular (Today)",
+                        value: _userPreferences.sort == nh.SearchSort.popularToday,
+                      ),
+                    ].map((item) {
+                      return CheckedPopupMenuItem(
+                        value: item,
+                        checked: item.value,
+                        child: Text(item.title),
+                      );
+                    }).toList();
+                  },
+                  onSelected: (selectedItem) async {
+                    if (selectedItem is PopupMenuItemModel) {
+                      if (selectedItem.title == "Recent") {
+                        _userPreferences.sort = nh.SearchSort.recent;
+                      } else if (selectedItem.title == "Popular") {
+                        _userPreferences.sort = nh.SearchSort.popular;
+                      } else if (selectedItem.title == "Popular (Month)") {
+                        _userPreferences.sort = nh.SearchSort.popularMonth;
+                      } else if (selectedItem.title == "Popular (Week)") {
+                        _userPreferences.sort = nh.SearchSort.popularWeek;
+                      } else if (selectedItem.title == "Popular (Today)") {
+                        _userPreferences.sort = nh.SearchSort.popularToday;
+                      }
+
+                      await _userPreferences.saveToFileData();
+
+                      if (widget._reloadData != null) await widget._reloadData!();
+                    }
                   },
                 ),
-                suffixIcon: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.search),
-                      onPressed: handleSearch,
-                    ),
-                    PopupMenuButton(
-                      child: const Icon(Icons.sort),
-                      itemBuilder: (_) {
-                        print(_userPreferences.sort.toString());
-
-                        if (_loading) return [];
-
-                        return [
-                          PopupMenuItemModel(
-                            title: "Recent",
-                            value: _userPreferences.sort == nh.SearchSort.recent,
-                          ),
-                          PopupMenuItemModel(
-                            title: "Popular",
-                            value: _userPreferences.sort == nh.SearchSort.popular,
-                          ),
-                          PopupMenuItemModel(
-                            title: "Popular (Month)",
-                            value: _userPreferences.sort == nh.SearchSort.popularMonth,
-                          ),
-                          PopupMenuItemModel(
-                            title: "Popular (Week)",
-                            value: _userPreferences.sort == nh.SearchSort.popularWeek,
-                          ),
-                          PopupMenuItemModel(
-                            title: "Popular (Today)",
-                            value: _userPreferences.sort == nh.SearchSort.popularToday,
-                          ),
-                        ].map((item) {
-                          return CheckedPopupMenuItem(
-                            value: item,
-                            checked: item.value,
-                            child: Text(item.title),
-                          );
-                        }).toList();
-                      },
-                      onSelected: (selectedItem) async {
-                        if (selectedItem is PopupMenuItemModel) {
-                          if (selectedItem.title == "Recent") {
-                            _userPreferences.sort = nh.SearchSort.recent;
-                          } else if (selectedItem.title == "Popular") {
-                            _userPreferences.sort = nh.SearchSort.popular;
-                          } else if (selectedItem.title == "Popular (Month)") {
-                            _userPreferences.sort = nh.SearchSort.popularMonth;
-                          } else if (selectedItem.title == "Popular (Week)") {
-                            _userPreferences.sort = nh.SearchSort.popularWeek;
-                          } else if (selectedItem.title == "Popular (Today)") {
-                            _userPreferences.sort = nh.SearchSort.popularToday;
-                          }
-
-                          await _userPreferences.saveToFileData();
-
-                          if (widget._reloadData != null) await widget._reloadData!();
-                        }
-                      },
-                    )
-                  ],
-                ),
-                filled: true,
-                fillColor: Colors.black,
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide.none, // Remove border
-                ),
-              ),
-              keyboardType: TextInputType.text,
+              ],
             ),
           ),
         ),
