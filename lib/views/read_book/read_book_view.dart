@@ -151,8 +151,12 @@ class _ReadBookViewState extends State<ReadBookView> {
                         ),
                         Text("Tags: $bookTags"),
                         const SizedBox(height: 10),
-                        Center(
-                          child: Text("Uploaded On: ${formatDateToString(book.uploaded)}"),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Uploaded On: ${formatDateToString(book.uploaded)}"),
+                            IconButton(onPressed: () {}, icon: const Icon(Icons.download))
+                          ],
                         ),
                       ],
                     ),

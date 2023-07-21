@@ -40,8 +40,6 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
     super.initState();
 
     _userPreferences.loadDataFromFile().then((value) {
-      print(value);
-
       setState(() {
         _loading = false;
       });
@@ -76,10 +74,10 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
             color: Colors.black,
             child: Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  onPressed: () {},
-                ),
+                // IconButton(
+                //   icon: const Icon(Icons.settings),
+                //   onPressed: () {},
+                // ),
                 Expanded(
                   child: TextField(
                     autofocus: false,
