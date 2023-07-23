@@ -9,7 +9,8 @@ class UserPreferencesModel {
   static const saveFileName = "user_preferences.json";
 
   /// User agent provided by the webview
-  nh.SearchSort? sort;
+  nh.SearchSort sort = nh.SearchSort.popularWeek;
+//   bool hideNsfw = false;
 
   Future<bool> saveToFileData() async {
     Directory? appDir = await getAppDir();
@@ -19,6 +20,7 @@ class UserPreferencesModel {
     try {
       final encodedData = jsonEncode({
         "sort": sort.toString(),
+        // "hideNsfw": hideNsfw,
       });
 
       final newFile = await File("${appDir.path}/$saveFileName").create();
@@ -67,6 +69,10 @@ class UserPreferencesModel {
     } else {
       sort = nh.SearchSort.popularWeek;
     }
+
+    // not decoding it will leave quotes in the string
+    // final bool? hideNsfwData = userDataJson['hideNsfw'];
+    // hideNsfw = hideNsfwData == true ? true : false;
 
     return true;
   }

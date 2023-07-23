@@ -1,6 +1,16 @@
-# NClientV3 (Beta)
+# NClientV3
 
 nHentai browser and reader inspired by [NClientV2](https://github.com/Dar9586/NClientV2).
+
+## Notes
+
+- This app only works on **Android 10 and up**.
+- This app is intended for users 21 years and older.
+- If nHentai is blocked in your country, then this app may behave strangely or not work.
+
+### FAQs
+
+- Does this work on iOS? I don't own any Apple products, so not sure 🤷
 
 ## Contributing
 

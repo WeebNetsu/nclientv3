@@ -68,11 +68,25 @@ class _BrowseViewState extends State<BrowseView> {
     await _userPreferences.loadDataFromFile();
 
     try {
+      nh.Search searchedBooks;
+
+      //   if (_userPreferences.hideNsfw) {
+      //     const tag = nh.Tag(
+      //       id: 139392,
+      //       type: nh.TagType.tag,
+      //       name: 'non-nude',
+      //       count: 25,
+      //       url: '/tag/non-nude/',
+      //     );
+      //     final q = '${const nh.SearchQueryTag(tag)}';
+      //     searchedBooks = await api.search(q).first;
+      //   } else {
       // get 1 page of the most recent books
-      final nh.Search searchedBooks = await _api.searchSinglePage(
+      searchedBooks = await _api.searchSinglePage(
         "*",
-        sort: _userPreferences.sort ?? nh.SearchSort.popularWeek,
+        sort: _userPreferences.sort,
       );
+      //   }
 
       try {
         setState(() {
@@ -99,6 +113,7 @@ class _BrowseViewState extends State<BrowseView> {
       await setNotRobot(clearData: true);
       return fetchBooks();
     } catch (e) {
+      debugPrint("Error on fetching books: $e");
       await setNotRobot(clearData: true);
       return fetchBooks();
     } finally {
