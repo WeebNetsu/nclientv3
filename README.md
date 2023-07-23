@@ -2,6 +2,8 @@
 
 nHentai browser and reader inspired by [NClientV2](https://github.com/Dar9586/NClientV2).
 
+You can find the releases here: https://github.com/WeebNetsu/nclientv3/releases
+
 ## Notes
 
 - This app only works on **Android 10 and up**.
