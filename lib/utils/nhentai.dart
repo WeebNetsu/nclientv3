@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:nclientv3/models/saved_book.dart';
 import 'package:nclientv3/utils/utils.dart';
 import 'package:nhentai/nhentai.dart' as nh;
 import 'package:path_provider/path_provider.dart';
@@ -86,7 +87,11 @@ Future<bool> downloadBook(
     await image.copy("${saveDir.path}/${image.path.split("/").last}");
   }
 
-  return !failedDownload;
+  final savedBook = SavedBookModel(book.id);
+  savedBook.title = book.title.toString();
+  final saveSuccess = await savedBook.saveBookData();
+
+  return saveSuccess;
 }
 
 /* example of how we can accomplish threaded downloads 

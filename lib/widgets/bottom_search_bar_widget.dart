@@ -102,6 +102,12 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
                   icon: const Icon(Icons.search),
                   onPressed: handleSearch,
                 ),
+                IconButton(
+                  icon: const Icon(Icons.download_for_offline_outlined),
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/downloads");
+                  },
+                ),
                 PopupMenuButton(
                   child: const Icon(Icons.sort),
                   itemBuilder: (_) {

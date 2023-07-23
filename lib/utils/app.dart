@@ -11,6 +11,21 @@ Future<Directory?> getAppDir() async {
   return dirs[0];
 }
 
+/// Count number of files in a directory
+int countFilesInDirectory(Directory directory) {
+  if (!directory.existsSync()) {
+    throw ArgumentError('Directory does not exist: ${directory.path}');
+  }
+
+  int count = 0;
+
+  for (var fileEntity in directory.listSync()) {
+    if (fileEntity is File) count++;
+  }
+
+  return count;
+}
+
 /// Get the size of your cache directory (may not be 100% same as in app info page)
 Future<int> getCacheSize() async {
   Directory tempDir = await getTemporaryDirectory();
