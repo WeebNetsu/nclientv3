@@ -27,6 +27,12 @@ class _ReadBookViewState extends State<ReadBookView> {
   nh.Book? _book;
   int _visiblePages = 3;
 
+  /// if downloading the book, show total pages downloaded
+  int? _totalPages;
+
+  /// works directly with _totalDownloadPercent
+  int _totalPagesDownloaded = 0;
+
   Future<void> fetchBook() async {
     if (_bookId == null || _api == null) {
       _errorMessage = "Did not get book ID or api... Coding bug, gomen!";
@@ -160,9 +166,40 @@ class _ReadBookViewState extends State<ReadBookView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("Uploaded On: ${formatDateToString(book.uploaded)}"),
-                            IconButton(onPressed: () {}, icon: const Icon(Icons.download))
+                            IconButton(
+                              icon: const Icon(Icons.download),
+                              onPressed: _totalPagesDownloaded == _totalPages
+                                  ? null
+                                  : () async {
+                                      await downloadBook(
+                                        _api!,
+                                        book.id,
+                                        afterSinglePageDownload: (totalPageCount) {
+                                          setState(() {
+                                            _totalPagesDownloaded++;
+                                            _totalPages ??= totalPageCount;
+                                          });
+                                        },
+                                      );
+                                    },
+                            )
                           ],
                         ),
+                        _totalPages != null
+                            ? Column(
+                                children: [
+                                  Text(
+                                    _totalPagesDownloaded == _totalPages!
+                                        ? "Download Done!"
+                                        : "Downloading book, do not leave this page until it is done!",
+                                  ),
+                                  LinearProgressIndicator(
+                                    value: _totalPagesDownloaded / _totalPages!,
+                                    color: _totalPagesDownloaded == _totalPages! ? Colors.green : Colors.blue,
+                                  ),
+                                ],
+                              )
+                            : Container(),
                       ],
                     ),
                   ),

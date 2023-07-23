@@ -9,3 +9,18 @@ void copyTextToClipboard(BuildContext context, String text) {
     const SnackBar(content: Text('Copied!')),
   );
 }
+
+void showMessage(
+  BuildContext context,
+  String text, {
+  int duration = 3,
+  bool error = false,
+}) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(text),
+      duration: Duration(seconds: duration),
+      backgroundColor: error ? Colors.red : Colors.blue,
+    ),
+  );
+}
