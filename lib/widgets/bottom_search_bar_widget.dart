@@ -74,10 +74,12 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
             color: Colors.black,
             child: Row(
               children: [
-                // IconButton(
-                //   icon: const Icon(Icons.settings),
-                //   onPressed: () {},
-                // ),
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/settings");
+                  },
+                ),
                 Expanded(
                   child: TextField(
                     autofocus: false,
