@@ -143,12 +143,14 @@ class _BrowseViewState extends State<BrowseView> {
     if (_apiDownError) {
       return const MessagePageWidget(
         text: "Something went wrong, the API seems to be down",
+        showDownloadsButton: true,
       );
     }
 
     if (!_connectedToInternet!) {
       return const MessagePageWidget(
         text: "Damn! I can't seem to connect to the internet!",
+        showDownloadsButton: true,
       );
     }
 
@@ -164,7 +166,10 @@ class _BrowseViewState extends State<BrowseView> {
           } else if (snapshot.hasError) {
             debugPrint("Error occurred: ${snapshot.error}");
             // Handle any error that occurred during the future execution
-            return const MessagePageWidget(text: "Could not fetch the books, I am broken!");
+            return const MessagePageWidget(
+              text: "Could not fetch the books, I am broken!",
+              showDownloadsButton: true,
+            );
           }
 
           if (_loading) {

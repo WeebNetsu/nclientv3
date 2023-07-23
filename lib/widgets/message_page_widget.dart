@@ -4,13 +4,16 @@ import 'package:nclientv3/constants/constants.dart';
 class MessagePageWidget extends StatelessWidget {
   final String _text;
   final StatusEmojis _statusEmoji;
+  final bool _showDownloadsButton;
 
   const MessagePageWidget({
     super.key,
     String text = "An unknown error has just ocurred, sorry friend!",
     StatusEmojis statusEmoji = StatusEmojis.cry,
+    bool showDownloadsButton = false,
   })  : _text = text,
-        _statusEmoji = statusEmoji;
+        _statusEmoji = statusEmoji,
+        _showDownloadsButton = showDownloadsButton;
 
   String getEmojiAsset() {
     switch (_statusEmoji) {
@@ -40,6 +43,14 @@ class MessagePageWidget extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(_text),
+            const Divider(),
+            if (!_showDownloadsButton)
+              Container()
+            else
+              MaterialButton(
+                onPressed: () => Navigator.pushNamed(context, "/downloads"),
+                child: const Text("Open Downloads"),
+              ),
           ],
         ),
       ),
