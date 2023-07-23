@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'NClient V3',
+      title: 'NClientV3',
       theme: AppTheme.theme,
       routes: routes,
     );

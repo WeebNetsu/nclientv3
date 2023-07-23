@@ -35,7 +35,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   # to get data from the nhentai api
-  nhentai: ^1.0.0-dev.11
+  # nhentai: ^1.0.0-dev.11
+  nhentai:
+    git:
+      url: https://github.com/Zekfad/nhentai_dart
+      ref: master
   # to access nhentai via browser (for captcha)
   webview_flutter: ^4.2.2
   # get cookies from webview
@@ -45,7 +49,7 @@ dependencies:
   # check if keyboard was hidden
   flutter_keyboard_visibility: ^5.4.1
   # download images and other data from nhentai
-  http: ^0.13.5
+  http: ^1.1.0
   # cached_network_image: ^3.2.3
   # check if user is connected to the internet
   observe_internet_connectivity: ^1.0.2

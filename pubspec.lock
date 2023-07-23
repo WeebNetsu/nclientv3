@@ -101,10 +101,10 @@ packages:
     dependency: transitive
     description:
       name: dart_mappable
-      sha256: "1371f34bd1a7c238d665a023ce65b306c65064610d9644200b81124e0b87682d"
+      sha256: ac9e39d7696a8f6e622f9071f78123b2fca6b4d14f6f8af1df1a04782917ac49
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.3"
+    version: "3.1.2"
   fake_async:
     dependency: transitive
     description:
@@ -204,10 +204,10 @@ packages:
     dependency: "direct main"
     description:
       name: http
-      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
+      sha256: "759d1a329847dd0f39226c688d3e06a6b8679668e350e2891a6474f8b4bb8525"
       url: "https://pub.dev"
     source: hosted
-    version: "0.13.6"
+    version: "1.1.0"
   http_parser:
     dependency: transitive
     description:
@@ -291,10 +291,11 @@ packages:
   nhentai:
     dependency: "direct main"
     description:
-      name: nhentai
-      sha256: a1c84a8130c8718e26dd571664a8ae0e46ef1a2de457ff56d683dec60a4704ba
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: master
+      resolved-ref: "303029563282178731cbf961473872a32829dec4"
+      url: "https://github.com/Zekfad/nhentai_dart"
+    source: git
     version: "1.0.0-dev.11"
   observe_internet_connectivity:
     dependency: "direct main"
