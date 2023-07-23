@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nclientv3/utils/utils.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 
 class SettingsView extends StatefulWidget {
@@ -32,10 +33,27 @@ class _SettingsViewState extends State<SettingsView> {
               text: "Storage",
               onPressed: () => Navigator.pushNamed(context, "/settings/storage"),
             ),
-            // ArrowRowButton(
-            //   text: "Ads",
-            //   onPressed: () {},
-            // ),
+            ArrowRowButton(
+              text: "Donate",
+              onPressed: () => Navigator.pushNamed(context, "/settings/donate"),
+            ),
+            const Divider(color: Colors.grey),
+            const SizedBox(height: 10),
+            GestureDetector(
+              onTap: () async {
+                await openUrl('https://github.com/WeebNetsu');
+              },
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Developed by '),
+                  Text(
+                    'WeebNetsu',
+                    style: TextStyle(decoration: TextDecoration.underline),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
