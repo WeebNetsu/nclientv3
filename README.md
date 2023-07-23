@@ -10,7 +10,8 @@ nHentai browser and reader inspired by [NClientV2](https://github.com/Dar9586/NC
 
 ### FAQs
 
-- Does this work on iOS? I don't own any Apple products, so not sure 🤷
+- Does this work on iOS? - I don't own any Apple products, so not sure 🤷
+- I am just getting a blank screen? - nHentai might be blocked in your country, try using a VPN or Proxy
 
 ## Contributing
 
