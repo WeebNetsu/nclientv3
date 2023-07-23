@@ -15,7 +15,7 @@ class ArrowRowButton extends StatelessWidget {
     return Column(
       children: [
         MaterialButton(
-          onPressed: () {},
+          onPressed: onPressed,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(

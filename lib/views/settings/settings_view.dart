@@ -27,28 +27,15 @@ class _SettingsViewState extends State<SettingsView> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           children: [
-            const SizedBox(height: 50),
-            Row(children: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_back)),
-              const Expanded(
-                child: Align(
-                  alignment: Alignment(-0.1, 0),
-                  child: Text(
-                    "Settings",
-                    style: TextStyle(fontSize: 30),
-                  ),
-                ),
-              ),
-            ]),
-            const SizedBox(height: 20),
+            const PageTitleDisplay(title: "Settings"),
             ArrowRowButton(
               text: "Storage",
-              onPressed: () {},
+              onPressed: () => Navigator.pushNamed(context, "/settings/storage"),
             ),
-            ArrowRowButton(
-              text: "Ads",
-              onPressed: () {},
-            ),
+            // ArrowRowButton(
+            //   text: "Ads",
+            //   onPressed: () {},
+            // ),
           ],
         ),
       ),
