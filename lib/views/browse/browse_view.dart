@@ -42,6 +42,10 @@ class _BrowseViewState extends State<BrowseView> {
   }
 
   Future<void> fetchBooks() async {
+    if (_connectedToInternet == false) {
+      return;
+    }
+
     await _userData.loadDataFromFile();
 
     final cookies = _userData.cookies;
@@ -127,23 +131,21 @@ class _BrowseViewState extends State<BrowseView> {
   void initState() {
     super.initState();
 
-    _loadingBooks = fetchBooks();
+    InternetConnectivity().hasInternetConnection.then((hasInternet) {
+      setState(() {
+        _connectedToInternet = hasInternet;
+        _loadingBooks = fetchBooks();
+      });
+    });
 
     var keyboardVisibilityController = KeyboardVisibilityController();
 
     // Subscribe
     keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
-      //   print('Keyboard visibility update. Is visible: $visible');
       if (!visible) {
         // SystemChannels.textInput.invokeMethod('TextInput.hide');
         _focusNode.unfocus();
       }
-    });
-
-    InternetConnectivity().hasInternetConnection.then((hasInternet) {
-      setState(() {
-        _connectedToInternet = hasInternet;
-      });
     });
   }
 
@@ -155,16 +157,16 @@ class _BrowseViewState extends State<BrowseView> {
       );
     }
 
-    if (_apiDownError) {
+    if (_connectedToInternet == false) {
       return const MessagePageWidget(
-        text: "Something went wrong, the API seems to be down",
+        text: "Damn! I can't seem to connect to the internet!",
         showDownloadsButton: true,
       );
     }
 
-    if (!_connectedToInternet!) {
+    if (_apiDownError) {
       return const MessagePageWidget(
-        text: "Damn! I can't seem to connect to the internet!",
+        text: "Something went wrong, the API seems to be down",
         showDownloadsButton: true,
       );
     }
