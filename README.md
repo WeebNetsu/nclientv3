@@ -17,6 +17,7 @@ Please be descriptive of your issues, if you create an issue and all it says is 
   - `theme/` - App theme setup
   - `utils/` - Global scope functions
   - `views/` - All pages on the app
+    - `widgets/` - Widgets that were designed to only work with this view
   - `widgets/` - Global scope widgets
 
 ### Resources

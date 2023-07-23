@@ -61,4 +61,19 @@ class SavedBookModel {
 
     return true;
   }
+
+  /// Permanently delete a book from storage
+  Future<void> deleteBook({void Function()? afterDelete}) async {
+    final Directory? appDir = await getAppDir();
+
+    if (appDir == null) return;
+
+    final Directory saveFileDir = Directory("${appDir.path}/$id");
+
+    if (!saveFileDir.existsSync()) return;
+
+    await saveFileDir.delete(recursive: true);
+
+    if (afterDelete != null) afterDelete();
+  }
 }

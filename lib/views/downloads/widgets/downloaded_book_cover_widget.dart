@@ -6,12 +6,15 @@ class DownloadedBookCoverWidget extends StatelessWidget {
   final SavedBookModel _book;
 
   final bool _lastBookFullWidth;
+  final void Function() _reloadPage;
 
   const DownloadedBookCoverWidget({
     super.key,
     required SavedBookModel book,
+    required void Function() reloadPage,
     bool lastBookFullWidth = false,
   })  : _book = book,
+        _reloadPage = reloadPage,
         _lastBookFullWidth = lastBookFullWidth;
 
   @override
@@ -20,8 +23,9 @@ class DownloadedBookCoverWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(4.0),
         child: GestureDetector(
-          onTap: () {
-            // Navigator.pushNamed(context, "/read", arguments: {"bookId": _book.id, "api": _api});
+          onTap: () async {
+            await Navigator.pushNamed(context, "/downloads/read", arguments: {"bookId": _book.id});
+            _reloadPage();
           },
           child: Stack(
             children: [

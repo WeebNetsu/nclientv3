@@ -5,6 +5,8 @@ import 'package:nclientv3/models/saved_book.dart';
 import 'package:nclientv3/utils/app.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 
+import 'widgets/downloaded_book_cover_widget.dart';
+
 class DownloadsView extends StatefulWidget {
   const DownloadsView({super.key});
 
@@ -19,12 +21,14 @@ class DownloadsView extends StatefulWidget {
 }
 
 class _DownloadsViewState extends State<DownloadsView> {
-  final List<SavedBookModel> _bookList = [];
+  List<SavedBookModel> _bookList = [];
   bool _loading = true;
 
-  @override
-  void initState() {
-    super.initState();
+  void reloadData() {
+    setState(() {
+      _loading = true;
+      _bookList = [];
+    });
 
     getDownloadedBooks().then((value) {
       setState(() {
@@ -33,6 +37,13 @@ class _DownloadsViewState extends State<DownloadsView> {
     }).catchError((e) {
       debugPrint(e);
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    reloadData();
   }
 
   Future<void> getDownloadedBooks() async {
@@ -87,8 +98,13 @@ class _DownloadsViewState extends State<DownloadsView> {
                         DownloadedBookCoverWidget(
                           book: _bookList[index],
                           lastBookFullWidth: index == _bookList.length - 1,
+                          reloadPage: reloadData,
                         ),
-                        if (index + 1 < _bookList.length) DownloadedBookCoverWidget(book: _bookList[index + 1]),
+                        if (index + 1 < _bookList.length)
+                          DownloadedBookCoverWidget(
+                            book: _bookList[index + 1],
+                            reloadPage: reloadData,
+                          ),
                       ],
                     );
                   } else {
