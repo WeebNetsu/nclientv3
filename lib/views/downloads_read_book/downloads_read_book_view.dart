@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:nclientv3/models/saved_book.dart';
 import 'package:nclientv3/utils/utils.dart';
-import 'package:nclientv3/views/downloads_read_book/widgets/download_book_page_widget.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 
 class DownloadsReadBookView extends StatefulWidget {
@@ -168,7 +167,7 @@ class _DownloadsReadBookViewState extends State<DownloadsReadBookView> {
               itemBuilder: (BuildContext context, int index) {
                 final page = _images[index];
 
-                return DownloadBookPageWidget(page: page);
+                return BookPageWidget(page: page);
               },
             ),
             const SizedBox(height: 40),
