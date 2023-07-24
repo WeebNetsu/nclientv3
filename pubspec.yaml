@@ -4,7 +4,7 @@ description: New and improved nHentai browsing app!
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 0.5.10+1
+version: 0.5.11+1
 
 environment:
   sdk: ">=3.0.5 <4.0.0"

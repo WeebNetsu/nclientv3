@@ -192,21 +192,21 @@ class _ReadBookViewState extends State<ReadBookView> {
                             )
                           ],
                         ),
-                        _totalPages != null
-                            ? Column(
-                                children: [
-                                  Text(
-                                    _totalPagesDownloaded == _totalPages!
-                                        ? "Download Done!"
-                                        : "Downloading book, do not leave this page until it is done!",
-                                  ),
-                                  LinearProgressIndicator(
-                                    value: _totalPagesDownloaded / _totalPages!,
-                                    color: _totalPagesDownloaded == _totalPages! ? Colors.green : Colors.blue,
-                                  ),
-                                ],
-                              )
-                            : Container(),
+                        if (_downloadingBook && _totalPagesDownloaded < 1) const LinearProgressIndicator(),
+                        if (_totalPages != null)
+                          Column(
+                            children: [
+                              Text(
+                                _totalPagesDownloaded == _totalPages!
+                                    ? "Download Done!"
+                                    : "Downloading book, do not leave this page until it is done!",
+                              ),
+                              LinearProgressIndicator(
+                                value: _totalPagesDownloaded / _totalPages!,
+                                color: _totalPagesDownloaded == _totalPages! ? Colors.green : Colors.blue,
+                              ),
+                            ],
+                          ),
                       ],
                     ),
                   ),
