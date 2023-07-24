@@ -55,7 +55,11 @@ class _SearchViewState extends State<SearchView> {
       final code = int.tryParse(text);
 
       if (code != null) {
-        Navigator.pushNamed(context, "/read", arguments: {"bookId": code, "api": _api});
+        await Navigator.pushNamed(context, "/read", arguments: {"bookId": code, "api": _api});
+        // if user searched for a code, then after they have opened the book,
+        // they will be redirected back to the page before they made the search,
+        // so they don't see an empty search page
+        (() => Navigator.pop(context))();
       }
 
       await _userPreferences.loadDataFromFile();

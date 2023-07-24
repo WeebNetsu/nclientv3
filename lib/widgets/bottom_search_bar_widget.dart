@@ -58,7 +58,10 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
     if (widget._handleSearch != null) {
       widget._handleSearch!(_searchText.text);
     } else {
-      await Navigator.pushNamed(context, "/search", arguments: {"searchText": _searchText.text, "api": widget._api});
+      await Navigator.pushNamed(context, "/search", arguments: {
+        "searchText": _searchText.text,
+        "api": widget._api,
+      });
     }
   }
 
