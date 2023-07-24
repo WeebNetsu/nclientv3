@@ -103,7 +103,7 @@ class _BookPageWidgetState extends State<BookPageWidget> {
                     Navigator.pop(context);
                   },
                   child: InteractiveViewer(
-                    boundaryMargin: EdgeInsets.all(20),
+                    boundaryMargin: const EdgeInsets.all(20),
                     minScale: 0.5,
                     maxScale: 4.0,
                     child: Image.file(_image!),

@@ -79,7 +79,7 @@ class _NotARobotViewState extends State<NotARobotView> {
                 return;
               }
 
-              Navigator.pop(context);
+              (() => Navigator.pop(context))();
             }
           },
         ),

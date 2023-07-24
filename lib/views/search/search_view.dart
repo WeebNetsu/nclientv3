@@ -62,7 +62,7 @@ class _SearchViewState extends State<SearchView> {
 
       final nh.Search searchRes = await (api ?? _api)!.searchSinglePage(
         text,
-        sort: _userPreferences.sort ?? nh.SearchSort.popular,
+        sort: _userPreferences.sort,
       );
 
       setState(() {
