@@ -25,7 +25,7 @@ class _ReadBookViewState extends State<ReadBookView> {
   int? _bookId;
   nh.API? _api;
   nh.Book? _book;
-  int _visiblePages = 3;
+  int _visiblePages = 5;
   bool _downloadingBook = false;
 
   /// if downloading the book, show total pages downloaded
@@ -46,6 +46,16 @@ class _ReadBookViewState extends State<ReadBookView> {
       setState(() {
         _book = book;
       });
+    } on nh.ApiException catch (error) {
+      if (error.message == "does not exist") {
+        setState(() {
+          _errorMessage = "Sorry friend, but $_bookId does not exist...";
+        });
+      } else {
+        setState(() {
+          _errorMessage = "Oh no, the API said '${error.message}'!";
+        });
+      }
     } catch (error) {
       setState(() {
         _errorMessage = "Oh no! something went wrong...";
@@ -91,7 +101,7 @@ class _ReadBookViewState extends State<ReadBookView> {
     // final scrollController = ScrollController();
 
     if (_errorMessage != null) {
-      return const MessagePageWidget();
+      return MessagePageWidget(text: _errorMessage!);
     }
 
     if (_bookId == null || _api == null) {
@@ -106,8 +116,11 @@ class _ReadBookViewState extends State<ReadBookView> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Display a loader while the future is executing
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Container(
+              height: 300,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
             );
           } else if (snapshot.hasError) {
             debugPrint("Error occurred: ${snapshot.error}");

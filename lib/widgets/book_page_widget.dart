@@ -81,7 +81,10 @@ class _BookPageWidgetState extends State<BookPageWidget> {
     }
 
     if (_loading) {
-      return const Center(child: CircularProgressIndicator());
+      return Container(
+        height: 500,
+        child: const Center(child: CircularProgressIndicator()),
+      );
     }
 
     if (_image == null) {
