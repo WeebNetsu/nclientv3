@@ -40,7 +40,7 @@ Please be descriptive of your issues, if you create an issue and all it says is 
 
 ## Support
 
-If you want the work I do, please consider subscribing to [Steve's teacher](https://www.youtube.com/@Stevesteacher) if you enjoy learning about programming, or send a donation my way, every little bit helps!
+If you want to support the work I do, please consider subscribing to [Steve's teacher](https://www.youtube.com/@Stevesteacher) if you enjoy learning about programming, or send a donation my way, every little bit helps!
 
 [<img alt="liberapay" src="https://img.shields.io/badge/-LiberaPay-EBC018?style=flat-square&logo=liberapay&logoColor=white" />](https://liberapay.com/stevesteacher/)
 [<img alt="kofi" src="https://img.shields.io/badge/-Kofi-7648BB?style=flat-square&logo=ko-fi&logoColor=white" />](https://ko-fi.com/stevesteacher)
