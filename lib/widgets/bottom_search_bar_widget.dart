@@ -14,6 +14,7 @@ class BottomSearchBarWidget extends StatefulWidget {
   final Future<void> Function(String text)? _handleSearch;
   final Future<void> Function()? _reloadData;
   final nh.API? _api;
+  final String? _defaultText;
 
   const BottomSearchBarWidget({
     super.key,
@@ -21,9 +22,11 @@ class BottomSearchBarWidget extends StatefulWidget {
     Future<void> Function(String text)? handleSearch,
     Future<void> Function()? reloadData,
     nh.API? api,
+    String? defaultText,
   })  : _focusNode = focusNode,
         _handleSearch = handleSearch,
         _api = api,
+        _defaultText = defaultText,
         _reloadData = reloadData;
 
   @override
@@ -42,6 +45,7 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
     _userPreferences.loadDataFromFile().then((value) {
       setState(() {
         _loading = false;
+        _searchText.text = widget._defaultText ?? "";
       });
     });
   }

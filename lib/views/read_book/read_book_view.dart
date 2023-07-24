@@ -116,9 +116,9 @@ class _ReadBookViewState extends State<ReadBookView> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Display a loader while the future is executing
-            return Container(
+            return const SizedBox(
               height: 300,
-              child: const Center(
+              child: Center(
                 child: CircularProgressIndicator(),
               ),
             );
@@ -129,7 +129,7 @@ class _ReadBookViewState extends State<ReadBookView> {
           }
 
           final book = _book!;
-          final bookTags = book.tags.map((e) => e.name).toList().join(', ');
+          //   final bookTags = book.tags.map((e) => e.name).toList().join(', ');
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -191,7 +191,41 @@ class _ReadBookViewState extends State<ReadBookView> {
                             ],
                           ),
                         ),
-                        Text("Tags: $bookTags"),
+                        // const Text("Tags:"),
+                        // Wrap(
+                        //   children: book.tags
+                        //       .map(
+                        //         (e) => TextButton(
+                        //           child: Text(e.name),
+                        //           onPressed: () {},
+                        //         ),
+                        //       )
+                        //       .toList(),
+                        // ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              const Text("Tags:"),
+                              Row(
+                                children: book.tags
+                                    .map(
+                                      (e) => TextButton(
+                                        child: Text(e.name),
+                                        onPressed: () async {
+                                          await Navigator.pushNamed(context, "/search", arguments: {
+                                            "tag": e,
+                                            "api": _api,
+                                          });
+                                        },
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+
                         const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

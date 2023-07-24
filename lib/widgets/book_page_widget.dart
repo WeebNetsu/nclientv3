@@ -81,9 +81,9 @@ class _BookPageWidgetState extends State<BookPageWidget> {
     }
 
     if (_loading) {
-      return Container(
+      return const SizedBox(
         height: 500,
-        child: const Center(child: CircularProgressIndicator()),
+        child: Center(child: CircularProgressIndicator()),
       );
     }
 

@@ -27,6 +27,9 @@ class _SearchViewState extends State<SearchView> {
   Map<String, dynamic>? arguments;
   String? _errorMessage;
   nh.API? _api;
+
+  /// if searching for a specific tag
+  nh.Tag? _tag;
   List<nh.Book> _searchedBooks = [];
   String? _lastSearchPrompt;
 
@@ -53,6 +56,16 @@ class _SearchViewState extends State<SearchView> {
       });
 
       final code = int.tryParse(text);
+
+      if (_tag != null) {
+        final q = '${nh.SearchQueryTag(_tag!)}';
+        final searchRes = await (api ?? _api)!.searchSinglePage(q, sort: _userPreferences.sort);
+        setState(() {
+          _searchedBooks = searchRes.books;
+          _loading = false;
+        });
+        return;
+      }
 
       if (code != null) {
         await Navigator.pushNamed(context, "/read", arguments: {"bookId": code, "api": _api});
@@ -110,11 +123,34 @@ class _SearchViewState extends State<SearchView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
 
-      final String searchText = arguments?['searchText'];
+      final String? searchText = arguments?['searchText'];
       final nh.API? api = arguments?['api'];
+      nh.Tag? generatedTag;
+
+      if (searchText?.startsWith("Tag(") == true) {
+        // tag would generally look like this: "Tag(name:id)"
+        final tagDetails = searchText!.split("(").last.split(")").first.split(":");
+        final tagName = tagDetails.first;
+        final tagId = int.tryParse(tagDetails.last);
+
+        if (tagId != null) {
+          generatedTag = nh.Tag(
+            id: tagId,
+            type: nh.TagType.tag,
+            name: tagName,
+            count: 25,
+            url: '/tag/$tagName/',
+          );
+        }
+      }
 
       _api = api;
-      _loadingBooks = searchBooks(searchText, api: api);
+      _tag = arguments?['tag'] ?? generatedTag;
+      _lastSearchPrompt = _tag != null ? "Tag(${_tag!.name}:${_tag!.id})" : (searchText ?? "*");
+      _loadingBooks = searchBooks(
+        _lastSearchPrompt ?? "*",
+        api: api,
+      );
     });
   }
 
@@ -224,6 +260,7 @@ class _SearchViewState extends State<SearchView> {
                 focusNode: _focusNode,
                 handleSearch: searchBooks,
                 reloadData: _reloadDataOnSpot,
+                defaultText: _lastSearchPrompt,
               ),
             ],
           );
