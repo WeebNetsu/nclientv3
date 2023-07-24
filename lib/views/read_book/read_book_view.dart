@@ -26,6 +26,7 @@ class _ReadBookViewState extends State<ReadBookView> {
   nh.API? _api;
   nh.Book? _book;
   int _visiblePages = 3;
+  bool _downloadingBook = false;
 
   /// if downloading the book, show total pages downloaded
   int? _totalPages;
@@ -50,6 +51,23 @@ class _ReadBookViewState extends State<ReadBookView> {
         _errorMessage = "Oh no! something went wrong...";
       });
     }
+  }
+
+  Future<void> handleDownloadBook(int bookId) async {
+    setState(() {
+      _downloadingBook = true;
+    });
+
+    await downloadBook(
+      _api!,
+      bookId,
+      afterSinglePageDownload: (totalPageCount) {
+        setState(() {
+          _totalPagesDownloaded++;
+          _totalPages ??= totalPageCount;
+        });
+      },
+    );
   }
 
   @override
@@ -168,20 +186,9 @@ class _ReadBookViewState extends State<ReadBookView> {
                             Text("Uploaded On: ${formatDateToString(book.uploaded)}"),
                             IconButton(
                               icon: const Icon(Icons.download),
-                              onPressed: _totalPagesDownloaded == _totalPages
+                              onPressed: _downloadingBook || _totalPagesDownloaded == _totalPages
                                   ? null
-                                  : () async {
-                                      await downloadBook(
-                                        _api!,
-                                        book.id,
-                                        afterSinglePageDownload: (totalPageCount) {
-                                          setState(() {
-                                            _totalPagesDownloaded++;
-                                            _totalPages ??= totalPageCount;
-                                          });
-                                        },
-                                      );
-                                    },
+                                  : () => handleDownloadBook(book.id),
                             )
                           ],
                         ),
