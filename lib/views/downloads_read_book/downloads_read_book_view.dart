@@ -43,9 +43,7 @@ class _DownloadsReadBookViewState extends State<DownloadsReadBookView> {
       final bookDir = Directory("${appDir.path}/$_bookId");
       for (final item in bookDir.listSync()) {
         if (item is File) {
-          if (item.path.endsWith(".jpg")) {
-            _images.add(item);
-          }
+          if (isImage(item.path)) _images.add(item);
         }
       }
 

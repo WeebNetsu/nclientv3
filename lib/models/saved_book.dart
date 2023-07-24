@@ -49,6 +49,12 @@ class SavedBookModel {
 
     coverImage = File("${saveFileDir.path}/1.jpg");
 
+    if (coverImage?.existsSync() != true) {
+      // there are so many file types out there, we're hoping the
+      // thumbnail is jpg or png
+      coverImage = File("${saveFileDir.path}/1.png");
+    }
+
     if (!saveFile.existsSync()) return true;
 
     final saveData = await saveFile.readAsString();
