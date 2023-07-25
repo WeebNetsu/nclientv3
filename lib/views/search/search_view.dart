@@ -57,16 +57,6 @@ class _SearchViewState extends State<SearchView> {
 
       final code = int.tryParse(text);
 
-      if (_tag != null) {
-        final q = '${nh.SearchQueryTag(_tag!)}';
-        final searchRes = await (api ?? _api)!.searchSinglePage(q, sort: _userPreferences.sort);
-        setState(() {
-          _searchedBooks = searchRes.books;
-          _loading = false;
-        });
-        return;
-      }
-
       if (code != null) {
         await Navigator.pushNamed(context, "/read", arguments: {"bookId": code, "api": _api});
         // if user searched for a code, then after they have opened the book,
@@ -77,13 +67,28 @@ class _SearchViewState extends State<SearchView> {
 
       await _userPreferences.loadDataFromFile();
 
+      String searchQuery = text;
+      // todo once the tag search query issue is fixed, we can move this back above
+      // the if statement
+      final languageQuery = nh.Tag.named(
+        type: nh.TagType.language,
+        name: _userPreferences.language,
+      ).query;
+
+      searchQuery += text.isEmpty ? "$languageQuery" : " $languageQuery";
+
+      if (_tag != null) {
+        searchQuery += ' ${_tag!.query}';
+      }
+
       final nh.Search searchRes = await (api ?? _api)!.searchSinglePage(
-        text,
+        searchQuery,
         sort: _userPreferences.sort,
       );
 
       setState(() {
         _searchedBooks = searchRes.books;
+        _loading = false;
       });
     } on nh.ApiException {
       setState(() {
@@ -125,30 +130,30 @@ class _SearchViewState extends State<SearchView> {
 
       final String? searchText = arguments?['searchText'];
       final nh.API? api = arguments?['api'];
-      nh.Tag? generatedTag;
 
-      if (searchText?.startsWith("Tag(") == true) {
-        // tag would generally look like this: "Tag(name:id)"
-        final tagDetails = searchText!.split("(").last.split(")").first.split(":");
-        final tagName = tagDetails.first;
-        final tagId = int.tryParse(tagDetails.last);
+      //   nh.Tag? generatedTag;
+      //   if (searchText?.startsWith("Tag(") == true) {
+      //     // tag would generally look like this: "Tag(name:id)"
+      //     final tagDetails = searchText!.split("(").last.split(")").first.split(":");
+      //     final tagName = tagDetails.first;
+      //     final tagId = int.tryParse(tagDetails.last);
 
-        if (tagId != null) {
-          generatedTag = nh.Tag(
-            id: tagId,
-            type: nh.TagType.tag,
-            name: tagName,
-            count: 25,
-            url: '/tag/$tagName/',
-          );
-        }
-      }
+      //     if (tagId != null) {
+      //       generatedTag = nh.Tag(
+      //         id: tagId,
+      //         type: nh.TagType.tag,
+      //         name: tagName,
+      //         count: 25,
+      //         url: '/tag/$tagName/',
+      //       );
+      //     }
+      //   }
 
       _api = api;
-      _tag = arguments?['tag'] ?? generatedTag;
-      _lastSearchPrompt = _tag != null ? "Tag(${_tag!.name}:${_tag!.id})" : (searchText ?? "*");
+      _tag = arguments?['tag'];
+      _lastSearchPrompt = searchText;
       _loadingBooks = searchBooks(
-        _lastSearchPrompt ?? "*",
+        _lastSearchPrompt ?? "",
         api: api,
       );
     });

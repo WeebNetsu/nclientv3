@@ -26,3 +26,6 @@ String capitalizeFirstLetter(String input) {
   }
   return input[0].toUpperCase() + input.substring(1);
 }
+
+/// Generate a tag url, `/tag/value/`
+String generateTagUrl(String name) => '/tag/$name/';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nclientv3/constants/constants.dart';
 import 'package:nclientv3/models/models.dart';
 import 'package:nclientv3/utils/utils.dart';
 import 'package:nclientv3/widgets/widgets.dart';
@@ -19,7 +20,6 @@ class SettingsFiltersView extends StatefulWidget {
 class _SettingsFiltersViewState extends State<SettingsFiltersView> {
   final _userPreferences = UserPreferencesModel();
 
-  String? _selectedOption;
   bool _loading = true;
 
   @override
@@ -51,9 +51,9 @@ class _SettingsFiltersViewState extends State<SettingsFiltersView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text("Language"),
-                DropdownButton<BookLanguage>(
+                DropdownButton<String>(
                   value: _userPreferences.language,
-                  onChanged: (BookLanguage? newValue) {
+                  onChanged: (String? newValue) {
                     setState(() {
                       if (newValue != null) {
                         _userPreferences.language = newValue;
@@ -61,15 +61,24 @@ class _SettingsFiltersViewState extends State<SettingsFiltersView> {
                       }
                     });
                   },
-                  items: BookLanguage.values.map<DropdownMenuItem<BookLanguage>>((BookLanguage value) {
-                    return DropdownMenuItem<BookLanguage>(
+                  items: NHentaiConstants.languages.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(capitalizeFirstLetter(value.name)),
+                      child: Text(capitalizeFirstLetter(value == "*" ? "All" : value)),
                     );
                   }).toList(),
                 ),
               ],
             ),
+            Text(
+              "This will make all your search results and "
+              "home page only show results in your preferred language.",
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[300],
+              ),
+            ),
+            const SizedBox(height: 10),
             Divider(color: Colors.grey[500]),
           ],
         ),

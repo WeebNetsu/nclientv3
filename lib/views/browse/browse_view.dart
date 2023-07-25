@@ -57,7 +57,7 @@ class _BrowseViewState extends State<BrowseView> {
     }
 
     final api = nh.API(
-      //   'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) FxQuantum/114.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36',
+      // 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) FxQuantum/114.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36',
       userAgent: userAgent,
       beforeRequest: beforeRequestAddCookiesStatic(
         cookies,
@@ -74,23 +74,20 @@ class _BrowseViewState extends State<BrowseView> {
     try {
       nh.Search searchedBooks;
 
-      //   if (_userPreferences.hideNsfw) {
-      //     const tag = nh.Tag(
-      //       id: 139392,
-      //       type: nh.TagType.tag,
-      //       name: 'non-nude',
-      //       count: 25,
-      //       url: '/tag/non-nude/',
-      //     );
-      //     final q = '${const nh.SearchQueryTag(tag)}';
-      //     searchedBooks = await api.search(q).first;
-      //   } else {
+      String searchQuery = "*";
+
+      final languageQuery = nh.Tag.named(
+        type: nh.TagType.language,
+        name: _userPreferences.language,
+      ).query;
+
+      searchQuery += "$languageQuery";
+
       // get 1 page of the most recent books
       searchedBooks = await _api.searchSinglePage(
-        "*",
+        searchQuery,
         sort: _userPreferences.sort,
       );
-      //   }
 
       try {
         setState(() {

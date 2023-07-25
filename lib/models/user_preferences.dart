@@ -2,46 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:nclientv3/constants/constants.dart';
 import 'package:nclientv3/utils/utils.dart';
 import 'package:nhentai/nhentai.dart' as nh;
-
-/// All book languages, name and ID
-///
-/// Their IDs are what have been returned when asking the API
-enum BookLanguage {
-  all, // 0
-  english, // 12227
-}
-
-/// This will give each language its unique ID
-extension BookLanguageExtension on BookLanguage {
-  String get name {
-    switch (this) {
-      case BookLanguage.english:
-        return 'english';
-      default:
-        return 'all';
-    }
-  }
-
-  int get id {
-    switch (this) {
-      case BookLanguage.english:
-        return 12227;
-      default:
-        return 0;
-    }
-  }
-
-  /// Get a language by its ID, if not found, it will return `BookLanguage.all`
-  BookLanguage getLanguageById(int id) {
-    for (final lang in BookLanguage.values) {
-      if (lang.id == id) return lang;
-    }
-
-    return BookLanguage.all;
-  }
-}
 
 class UserPreferencesModel {
   static const saveFileName = "user_preferences.json";
@@ -49,7 +12,7 @@ class UserPreferencesModel {
   /// User agent provided by the webview
   // bool hideNsfw = false;
   nh.SearchSort sort = nh.SearchSort.popularWeek;
-  BookLanguage language = BookLanguage.all;
+  String language = NHentaiConstants.languages.first;
 
   Future<bool> saveToFileData() async {
     Directory? appDir = await getAppDir();
@@ -59,7 +22,7 @@ class UserPreferencesModel {
     try {
       final encodedData = jsonEncode({
         "sort": sort.toString(),
-        "language": language.id,
+        "language": language,
         // "hideNsfw": hideNsfw,
       });
 
@@ -110,14 +73,7 @@ class UserPreferencesModel {
       sort = nh.SearchSort.popularWeek;
     }
 
-    final int? languageData = userDataJson['language'];
-
-    for (final lang in BookLanguage.values) {
-      if (lang.id == languageData) {
-        language = lang;
-        break;
-      }
-    }
+    language = userDataJson['language'].toString();
 
     // not decoding it will leave quotes in the string
     // final bool? hideNsfwData = userDataJson['hideNsfw'];
