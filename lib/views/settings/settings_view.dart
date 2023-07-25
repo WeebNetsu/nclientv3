@@ -73,8 +73,8 @@ class _SettingsViewState extends State<SettingsView> {
               ),
             ), */
             ArrowRowButton(
-              text: "Browse and Search",
-              onPressed: () => Navigator.pushNamed(context, "/settings/browse-and-search"),
+              text: "Filters",
+              onPressed: () => Navigator.pushNamed(context, "/settings/filters"),
             ),
             ArrowRowButton(
               text: "Storage",

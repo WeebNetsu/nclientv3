@@ -9,7 +9,7 @@ Map<String, Widget Function(BuildContext)> routes = {
   "/read": (context) => const ReadBookView(),
   "/search": (context) => const SearchView(),
   '/settings': (context) => const SettingsView(),
-  '/settings/browse-and-search': (context) => const SettingsBrowseAndSearchView(),
   '/settings/donate': (context) => const SettingsDonateView(),
+  '/settings/filters': (context) => const SettingsFiltersView(),
   '/settings/storage': (context) => const SettingsStorageView(),
 };

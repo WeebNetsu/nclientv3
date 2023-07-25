@@ -5,12 +5,51 @@ import 'package:flutter/material.dart';
 import 'package:nclientv3/utils/utils.dart';
 import 'package:nhentai/nhentai.dart' as nh;
 
+/// All book languages, name and ID
+///
+/// Their IDs are what have been returned when asking the API
+enum BookLanguage {
+  all, // 0
+  english, // 12227
+}
+
+/// This will give each language its unique ID
+extension BookLanguageExtension on BookLanguage {
+  String get name {
+    switch (this) {
+      case BookLanguage.english:
+        return 'english';
+      default:
+        return 'all';
+    }
+  }
+
+  int get id {
+    switch (this) {
+      case BookLanguage.english:
+        return 12227;
+      default:
+        return 0;
+    }
+  }
+
+  /// Get a language by its ID, if not found, it will return `BookLanguage.all`
+  BookLanguage getLanguageById(int id) {
+    for (final lang in BookLanguage.values) {
+      if (lang.id == id) return lang;
+    }
+
+    return BookLanguage.all;
+  }
+}
+
 class UserPreferencesModel {
   static const saveFileName = "user_preferences.json";
 
   /// User agent provided by the webview
+  // bool hideNsfw = false;
   nh.SearchSort sort = nh.SearchSort.popularWeek;
-//   bool hideNsfw = false;
+  BookLanguage language = BookLanguage.all;
 
   Future<bool> saveToFileData() async {
     Directory? appDir = await getAppDir();
@@ -20,6 +59,7 @@ class UserPreferencesModel {
     try {
       final encodedData = jsonEncode({
         "sort": sort.toString(),
+        "language": language.id,
         // "hideNsfw": hideNsfw,
       });
 
@@ -68,6 +108,15 @@ class UserPreferencesModel {
       sort = nh.SearchSort.popularMonth;
     } else {
       sort = nh.SearchSort.popularWeek;
+    }
+
+    final int? languageData = userDataJson['language'];
+
+    for (final lang in BookLanguage.values) {
+      if (lang.id == languageData) {
+        language = lang;
+        break;
+      }
     }
 
     // not decoding it will leave quotes in the string
