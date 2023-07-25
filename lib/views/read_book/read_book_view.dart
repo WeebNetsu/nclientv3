@@ -191,17 +191,29 @@ class _ReadBookViewState extends State<ReadBookView> {
                             ],
                           ),
                         ),
-                        // const Text("Tags:"),
-                        // Wrap(
-                        //   children: book.tags
-                        //       .map(
-                        //         (e) => TextButton(
-                        //           child: Text(e.name),
-                        //           onPressed: () {},
-                        //         ),
-                        //       )
-                        //       .toList(),
-                        // ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              const Text("Artists:"),
+                              Row(
+                                children: book.tags.artists
+                                    .map(
+                                      (e) => TextButton(
+                                        child: Text(e.name),
+                                        onPressed: () async {
+                                          await Navigator.pushNamed(context, "/search", arguments: {
+                                            "tag": e,
+                                            "api": _api,
+                                          });
+                                        },
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            ],
+                          ),
+                        ),
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
@@ -225,8 +237,6 @@ class _ReadBookViewState extends State<ReadBookView> {
                             ],
                           ),
                         ),
-
-                        const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
