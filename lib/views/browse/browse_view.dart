@@ -74,7 +74,7 @@ class _BrowseViewState extends State<BrowseView> {
     try {
       nh.Search searchedBooks;
 
-      String searchQuery = "*";
+      String searchQuery = "";
 
       final languageQuery = nh.Tag.named(
         type: nh.TagType.language,
