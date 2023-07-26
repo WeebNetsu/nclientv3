@@ -195,9 +195,9 @@ class _ReadBookViewState extends State<ReadBookView> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: [
-                              const Text("Artists:"),
+                              const Text("Languages:"),
                               Row(
-                                children: book.tags.artists
+                                children: book.tags.languages
                                     .map(
                                       (e) => TextButton(
                                         child: Text(e.name),
@@ -218,9 +218,57 @@ class _ReadBookViewState extends State<ReadBookView> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: [
+                              const Text("Artists: "),
+                              Row(
+                                children: book.tags.artists.isEmpty
+                                    ? [Text("N/A")]
+                                    : book.tags.artists
+                                        .map(
+                                          (e) => TextButton(
+                                            child: Text(e.name),
+                                            onPressed: () async {
+                                              await Navigator.pushNamed(context, "/search", arguments: {
+                                                "tag": e,
+                                                "api": _api,
+                                              });
+                                            },
+                                          ),
+                                        )
+                                        .toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
                               const Text("Tags:"),
                               Row(
-                                children: book.tags
+                                children: book.tags.tags
+                                    .map(
+                                      (e) => TextButton(
+                                        child: Text(e.name),
+                                        onPressed: () async {
+                                          await Navigator.pushNamed(context, "/search", arguments: {
+                                            "tag": e,
+                                            "api": _api,
+                                          });
+                                        },
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              const Text("Groups:"),
+                              Row(
+                                children: book.tags.groups
                                     .map(
                                       (e) => TextButton(
                                         child: Text(e.name),

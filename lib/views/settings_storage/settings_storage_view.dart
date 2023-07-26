@@ -84,7 +84,7 @@ class _SettingsStorageViewState extends State<SettingsStorageView> {
                   return FullWidthButton(
                     text: "Delete All Downloads (${_deletedDownloads ? '0 KB' : formattedSize})",
                     onPressed: () async {
-                      var appDir = await getAppDir();
+                      final appDir = await getAppDir();
                       if (appDir == null) {
                         (() => showMessage(
                               context,

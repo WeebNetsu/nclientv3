@@ -13,6 +13,8 @@ class UserPreferencesModel {
   // bool hideNsfw = false;
   nh.SearchSort sort = nh.SearchSort.popularWeek;
   String language = NHentaiConstants.languages.first;
+  // * idea for the user blacklist - we make the tags in a doujin long tappable
+  // when long tapped, it will add the tag to the blacklist
 
   Future<bool> saveToFileData() async {
     Directory? appDir = await getAppDir();
