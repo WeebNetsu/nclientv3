@@ -68,17 +68,18 @@ class _SearchViewState extends State<SearchView> {
       await _userPreferences.loadDataFromFile();
 
       String searchQuery = text;
-      // todo once the tag search query issue is fixed, we can move this back above
-      // the if statement
-      final languageQuery = nh.Tag.named(
-        type: nh.TagType.language,
-        name: _userPreferences.language,
-      ).query;
 
-      searchQuery += text.isEmpty ? "$languageQuery" : " $languageQuery";
+      if (_userPreferences.language != "*") {
+        final languageQuery = nh.Tag.named(
+          type: nh.TagType.language,
+          name: _userPreferences.language,
+        ).query;
+
+        searchQuery += searchQuery.isEmpty ? "$languageQuery" : " $languageQuery";
+      }
 
       if (_tag != null) {
-        searchQuery += ' ${_tag!.query}';
+        searchQuery += searchQuery.isEmpty ? '${_tag!.query}' : ' ${_tag!.query}';
       }
 
       final nh.Search searchRes = await (api ?? _api)!.searchSinglePage(

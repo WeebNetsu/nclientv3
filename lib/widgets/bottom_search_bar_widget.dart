@@ -83,8 +83,9 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.settings),
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/settings");
+                  onPressed: () async {
+                    await Navigator.pushNamed(context, "/settings");
+                    if (widget._reloadData != null) await widget._reloadData!();
                   },
                 ),
                 Expanded(
@@ -151,6 +152,9 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
                   },
                   onSelected: (selectedItem) async {
                     if (selectedItem is PopupMenuItemModel) {
+                      // make sure to get all the latest changes before making them
+                      await _userPreferences.loadDataFromFile();
+
                       if (selectedItem.title == "Recent") {
                         _userPreferences.sort = nh.SearchSort.recent;
                       } else if (selectedItem.title == "Popular") {

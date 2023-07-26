@@ -76,12 +76,16 @@ class _BrowseViewState extends State<BrowseView> {
 
       String searchQuery = "";
 
-      final languageQuery = nh.Tag.named(
-        type: nh.TagType.language,
-        name: _userPreferences.language,
-      ).query;
+      if (_userPreferences.language != "*") {
+        final languageQuery = nh.Tag.named(
+          type: nh.TagType.language,
+          name: _userPreferences.language,
+        ).query;
 
-      searchQuery += "$languageQuery";
+        searchQuery += "$languageQuery";
+      }
+
+      if (searchQuery.isEmpty) searchQuery = "*";
 
       // get 1 page of the most recent books
       searchedBooks = await _api.searchSinglePage(
