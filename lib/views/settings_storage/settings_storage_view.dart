@@ -20,6 +20,7 @@ class SettingsStorageView extends StatefulWidget {
 
 class _SettingsStorageViewState extends State<SettingsStorageView> {
   bool _cacheCleared = false;
+  bool _deletedDownloads = false;
 
   @override
   void initState() {
@@ -53,11 +54,56 @@ class _SettingsStorageViewState extends State<SettingsStorageView> {
                   return FullWidthButton(
                     text: "Clear App Cache (${_cacheCleared ? '0 KB' : formattedSize})",
                     onPressed: () async {
-                      var appDir = (await getTemporaryDirectory()).path;
-                      await Directory(appDir).delete(recursive: true);
+                      var appDir = await getTemporaryDirectory();
+                      await appDir.delete(recursive: true);
 
                       setState(() {
                         _cacheCleared = true;
+                      });
+                    },
+                  );
+                }
+              },
+            ),
+            FutureBuilder<int>(
+              future: getDownloadsSize(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const FullWidthButton(
+                    text: "Delete All Downloads",
+                    onPressed: null,
+                  ); // Show a loading indicator while fetching the cache size
+                } else if (snapshot.hasError) {
+                  return const FullWidthButton(
+                    text: "Delete All Downloads (Error)",
+                    onPressed: null,
+                  ); // Show an error message if an error occurs
+                } else {
+                  final downloadsSize = snapshot.data;
+                  final formattedSize = formatByteSize(downloadsSize ?? 0);
+                  return FullWidthButton(
+                    text: "Delete All Downloads (${_deletedDownloads ? '0 KB' : formattedSize})",
+                    onPressed: () async {
+                      var appDir = await getAppDir();
+                      if (appDir == null) {
+                        (() => showMessage(
+                              context,
+                              "Could not delete downloads",
+                              error: true,
+                              duration: 5,
+                            ))();
+
+                        return;
+                      }
+
+                      for (var entity in appDir.listSync()) {
+                        if (entity is Directory) {
+                          await entity.delete(recursive: true);
+                        }
+                      }
+
+                      setState(() {
+                        _deletedDownloads = true;
                       });
                     },
                   );

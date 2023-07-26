@@ -33,6 +33,14 @@ Future<int> getCacheSize() async {
   return tempDirSize;
 }
 
+/// Get the size of your cache directory (may not be 100% same as in app info page)
+Future<int> getDownloadsSize() async {
+  final Directory? appDir = await getAppDir();
+  if (appDir == null) return 0;
+  final int appDirSize = getDirectorySize(appDir);
+  return appDirSize;
+}
+
 /// Get the size of a directory
 int getDirectorySize(FileSystemEntity file) {
   if (file is File) {
