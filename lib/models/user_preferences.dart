@@ -17,12 +17,14 @@ class UserPreferencesModel {
   String language = NHentaiConstants.languages.first;
 
   /// These are the tags the user does not want to see.
-  /// This can include artists, tags and groups (but NOT languages)
   List<String> blacklistedTags = [];
+  List<String> blacklistedArtists = [];
+  List<String> blacklistedGroups = [];
 
   /// These are the tags the user always wants to see.
-  /// This can include artists, tags and groups (but NOT languages)
   List<String> whitelistedTags = [];
+  List<String> whitelistedArtists = [];
+  List<String> whitelistedGroups = [];
 
   Future<bool> saveToFileData() async {
     Directory? appDir = await getAppDir();
@@ -34,7 +36,11 @@ class UserPreferencesModel {
         "sort": sort.toString(),
         "language": language,
         "blacklistedTags": blacklistedTags,
+        "blacklistedArtists": blacklistedArtists,
+        "blacklistedGroups": blacklistedGroups,
         "whitelistedTags": whitelistedTags,
+        "whitelistedArtists": whitelistedArtists,
+        "whitelistedGroups": whitelistedGroups,
         // "hideNsfw": hideNsfw,
       });
 
@@ -93,8 +99,24 @@ class UserPreferencesModel {
       blacklistedTags = List<String>.from(userDataJson['blacklistedTags']);
     }
 
+    if (userDataJson['blacklistedArtists'] != null) {
+      blacklistedArtists = List<String>.from(userDataJson['blacklistedArtists']);
+    }
+
+    if (userDataJson['blacklistedGroups'] != null) {
+      blacklistedGroups = List<String>.from(userDataJson['blacklistedGroups']);
+    }
+
     if (userDataJson['whitelistedTags'] != null) {
       whitelistedTags = List<String>.from(userDataJson['whitelistedTags']);
+    }
+
+    if (userDataJson['whitelistedArtists'] != null) {
+      whitelistedArtists = List<String>.from(userDataJson['whitelistedArtists']);
+    }
+
+    if (userDataJson['whitelistedGroups'] != null) {
+      whitelistedGroups = List<String>.from(userDataJson['whitelistedGroups']);
     }
 
     // not decoding it will leave quotes in the string

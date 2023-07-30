@@ -83,7 +83,75 @@ class _BrowseViewState extends State<BrowseView> {
         searchQuery += "$languageQuery";
       }
 
+      if (_userPreferences.blacklistedTags.isNotEmpty) {
+        for (final tag in _userPreferences.blacklistedTags) {
+          final query = nh.Tag.named(
+            type: nh.TagType.tag,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
+        }
+      }
+
+      if (_userPreferences.blacklistedArtists.isNotEmpty) {
+        for (final tag in _userPreferences.blacklistedArtists) {
+          final query = nh.Tag.named(
+            type: nh.TagType.artist,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
+        }
+      }
+
+      if (_userPreferences.blacklistedGroups.isNotEmpty) {
+        for (final tag in _userPreferences.blacklistedGroups) {
+          final query = nh.Tag.named(
+            type: nh.TagType.group,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
+        }
+      }
+
+      if (_userPreferences.whitelistedTags.isNotEmpty) {
+        for (final tag in _userPreferences.whitelistedTags) {
+          final query = nh.Tag.named(
+            type: nh.TagType.tag,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
+        }
+      }
+
+      if (_userPreferences.whitelistedArtists.isNotEmpty) {
+        for (final tag in _userPreferences.whitelistedArtists) {
+          final query = nh.Tag.named(
+            type: nh.TagType.artist,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
+        }
+      }
+
+      if (_userPreferences.whitelistedGroups.isNotEmpty) {
+        for (final tag in _userPreferences.whitelistedGroups) {
+          final query = nh.Tag.named(
+            type: nh.TagType.group,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
+        }
+      }
+
       if (searchQuery.isEmpty) searchQuery = "*";
+
+      print(searchQuery);
 
       // get 1 page of the most recent books
       searchedBooks = await _api.searchSinglePage(

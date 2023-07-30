@@ -32,20 +32,62 @@ class _TagButtonWidget extends State<TagButtonWidget> {
   }
 
   /// This will blacklist a tag, if the tag is already blacklisted, it will remove it from the list
-  Future<void> whiteOrBlacklistTag(String tagName) async {
-    final blacklistIndex = widget._userPreferences.blacklistedTags.indexOf(tagName);
-    final whitelistIndex = widget._userPreferences.whitelistedTags.indexOf(tagName);
+  Future<void> whiteOrBlacklistTag(String tagName, {bool artist = false, bool tag = false, bool group = false}) async {
+    // only one is allowed to be changed at a time, this is for safety
+    if (artist && tag || artist && group || group && tag) {
+      throw Exception("Only one of artist, tag, or group can be changed at a time");
+    }
 
-    if (blacklistIndex > -1) {
-      // remove from blacklist if it is there
-      widget._userPreferences.blacklistedTags.removeAt(blacklistIndex);
-    } else if (whitelistIndex > -1) {
-      // remove from whitelist if it is there and add it to the blacklist
-      widget._userPreferences.whitelistedTags.removeAt(whitelistIndex);
-      widget._userPreferences.blacklistedTags.add(tagName);
-    } else {
-      // add it to the whitelist
-      widget._userPreferences.whitelistedTags.add(tagName);
+    // at least 1 tag is required
+    if (!artist && !tag && !group) {
+      throw Exception("At least 1 tag is required");
+    }
+
+    if (artist) {
+      final blacklistIndex = widget._userPreferences.blacklistedArtists.indexOf(tagName);
+      final whitelistIndex = widget._userPreferences.whitelistedArtists.indexOf(tagName);
+
+      if (blacklistIndex > -1) {
+        // remove from blacklist if it is there
+        widget._userPreferences.blacklistedArtists.removeAt(blacklistIndex);
+      } else if (whitelistIndex > -1) {
+        // remove from whitelist if it is there and add it to the blacklist
+        widget._userPreferences.whitelistedArtists.removeAt(whitelistIndex);
+        widget._userPreferences.blacklistedArtists.add(tagName);
+      } else {
+        // add it to the whitelist
+        widget._userPreferences.whitelistedArtists.add(tagName);
+      }
+    } else if (tag) {
+      final blacklistIndex = widget._userPreferences.blacklistedTags.indexOf(tagName);
+      final whitelistIndex = widget._userPreferences.whitelistedTags.indexOf(tagName);
+
+      if (blacklistIndex > -1) {
+        // remove from blacklist if it is there
+        widget._userPreferences.blacklistedTags.removeAt(blacklistIndex);
+      } else if (whitelistIndex > -1) {
+        // remove from whitelist if it is there and add it to the blacklist
+        widget._userPreferences.whitelistedTags.removeAt(whitelistIndex);
+        widget._userPreferences.blacklistedTags.add(tagName);
+      } else {
+        // add it to the whitelist
+        widget._userPreferences.whitelistedTags.add(tagName);
+      }
+    } else if (group) {
+      final blacklistIndex = widget._userPreferences.blacklistedGroups.indexOf(tagName);
+      final whitelistIndex = widget._userPreferences.whitelistedGroups.indexOf(tagName);
+
+      if (blacklistIndex > -1) {
+        // remove from blacklist if it is there
+        widget._userPreferences.blacklistedGroups.removeAt(blacklistIndex);
+      } else if (whitelistIndex > -1) {
+        // remove from whitelist if it is there and add it to the blacklist
+        widget._userPreferences.whitelistedGroups.removeAt(whitelistIndex);
+        widget._userPreferences.blacklistedGroups.add(tagName);
+      } else {
+        // add it to the whitelist
+        widget._userPreferences.whitelistedGroups.add(tagName);
+      }
     }
 
     await widget._userPreferences.saveToFileData();
@@ -56,7 +98,12 @@ class _TagButtonWidget extends State<TagButtonWidget> {
   Widget build(BuildContext context) {
     return TextButton(
       onLongPress: () async {
-        await whiteOrBlacklistTag(widget._tag.name);
+        await whiteOrBlacklistTag(
+          widget._tag.name,
+          artist: widget._tag.type == nh.TagType.artist,
+          tag: widget._tag.type == nh.TagType.tag,
+          group: widget._tag.type == nh.TagType.group,
+        );
       },
       onPressed: () async {
         await Navigator.pushNamed(context, "/search", arguments: {
@@ -71,11 +118,17 @@ class _TagButtonWidget extends State<TagButtonWidget> {
               return Colors.grey; // Set the disabled text color
             }
 
-            if (widget._userPreferences.blacklistedTags.contains(widget._tag.name)) {
+            final pref = widget._userPreferences;
+
+            if (pref.blacklistedTags.contains(widget._tag.name) ||
+                pref.blacklistedArtists.contains(widget._tag.name) ||
+                pref.blacklistedGroups.contains(widget._tag.name)) {
               return Colors.red;
             }
 
-            if (widget._userPreferences.whitelistedTags.contains(widget._tag.name)) {
+            if (pref.whitelistedTags.contains(widget._tag.name) ||
+                pref.whitelistedArtists.contains(widget._tag.name) ||
+                pref.whitelistedGroups.contains(widget._tag.name)) {
               return Colors.green;
             }
 
