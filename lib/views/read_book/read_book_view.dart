@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
+import 'package:nclientv3/models/models.dart';
 import 'package:nclientv3/utils/utils.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/nhentai.dart' as nh;
@@ -27,6 +28,7 @@ class _ReadBookViewState extends State<ReadBookView> {
   nh.Book? _book;
   int _visiblePages = 5;
   bool _downloadingBook = false;
+  final _userPreferences = UserPreferencesModel();
 
   /// if downloading the book, show total pages downloaded
   int? _totalPages;
@@ -42,6 +44,7 @@ class _ReadBookViewState extends State<ReadBookView> {
 
     try {
       final book = await _api!.getBook(_bookId!);
+      await _userPreferences.loadDataFromFile();
 
       setState(() {
         _book = book;
@@ -221,17 +224,13 @@ class _ReadBookViewState extends State<ReadBookView> {
                               const Text("Artists: "),
                               Row(
                                 children: book.tags.artists.isEmpty
-                                    ? [Text("N/A")]
+                                    ? [const Text("N/A")]
                                     : book.tags.artists
                                         .map(
-                                          (e) => TextButton(
-                                            child: Text(e.name),
-                                            onPressed: () async {
-                                              await Navigator.pushNamed(context, "/search", arguments: {
-                                                "tag": e,
-                                                "api": _api,
-                                              });
-                                            },
+                                          (e) => TagButtonWidget(
+                                            tag: e,
+                                            userPreferences: _userPreferences,
+                                            api: _api,
                                           ),
                                         )
                                         .toList(),
@@ -247,14 +246,10 @@ class _ReadBookViewState extends State<ReadBookView> {
                               Row(
                                 children: book.tags.tags
                                     .map(
-                                      (e) => TextButton(
-                                        child: Text(e.name),
-                                        onPressed: () async {
-                                          await Navigator.pushNamed(context, "/search", arguments: {
-                                            "tag": e,
-                                            "api": _api,
-                                          });
-                                        },
+                                      (e) => TagButtonWidget(
+                                        tag: e,
+                                        userPreferences: _userPreferences,
+                                        api: _api,
                                       ),
                                     )
                                     .toList(),
@@ -270,14 +265,10 @@ class _ReadBookViewState extends State<ReadBookView> {
                               Row(
                                 children: book.tags.groups
                                     .map(
-                                      (e) => TextButton(
-                                        child: Text(e.name),
-                                        onPressed: () async {
-                                          await Navigator.pushNamed(context, "/search", arguments: {
-                                            "tag": e,
-                                            "api": _api,
-                                          });
-                                        },
+                                      (e) => TagButtonWidget(
+                                        tag: e,
+                                        userPreferences: _userPreferences,
+                                        api: _api,
                                       ),
                                     )
                                     .toList(),

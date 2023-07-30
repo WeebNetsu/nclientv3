@@ -12,9 +12,17 @@ class UserPreferencesModel {
   /// User agent provided by the webview
   // bool hideNsfw = false;
   nh.SearchSort sort = nh.SearchSort.popularWeek;
+
+  /// The doujin language of choice for the user
   String language = NHentaiConstants.languages.first;
-  // * idea for the user blacklist - we make the tags in a doujin long tappable
-  // when long tapped, it will add the tag to the blacklist
+
+  /// These are the tags the user does not want to see.
+  /// This can include artists, tags and groups (but NOT languages)
+  List<String> blacklistedTags = [];
+
+  /// These are the tags the user always wants to see.
+  /// This can include artists, tags and groups (but NOT languages)
+  List<String> whitelistedTags = [];
 
   Future<bool> saveToFileData() async {
     Directory? appDir = await getAppDir();
@@ -25,6 +33,8 @@ class UserPreferencesModel {
       final encodedData = jsonEncode({
         "sort": sort.toString(),
         "language": language,
+        "blacklistedTags": blacklistedTags,
+        "whitelistedTags": whitelistedTags,
         // "hideNsfw": hideNsfw,
       });
 
@@ -75,7 +85,17 @@ class UserPreferencesModel {
       sort = nh.SearchSort.popularWeek;
     }
 
-    language = userDataJson['language'].toString();
+    if (userDataJson['language'] != null) {
+      language = userDataJson['language'].toString();
+    }
+
+    if (userDataJson['blacklistedTags'] != null) {
+      blacklistedTags = List<String>.from(userDataJson['blacklistedTags']);
+    }
+
+    if (userDataJson['whitelistedTags'] != null) {
+      whitelistedTags = List<String>.from(userDataJson['whitelistedTags']);
+    }
 
     // not decoding it will leave quotes in the string
     // final bool? hideNsfwData = userDataJson['hideNsfw'];

@@ -42,9 +42,7 @@ class _BrowseViewState extends State<BrowseView> {
   }
 
   Future<void> fetchBooks() async {
-    if (_connectedToInternet == false) {
-      return;
-    }
+    if (_connectedToInternet == false) return;
 
     await _userData.loadDataFromFile();
 
