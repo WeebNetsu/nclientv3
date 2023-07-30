@@ -9,15 +9,18 @@ class BookCoverWidget extends StatelessWidget {
   /// the full width of the page, then we can apply special
   /// styling
   final bool _lastBookFullWidth;
+  final Future<void> Function()? _reloadData;
 
   const BookCoverWidget({
     super.key,
     required nh.Book book,
     required nh.API api,
     bool lastBookFullWidth = false,
+    Future<void> Function()? reloadData,
   })  : _book = book,
         _api = api,
-        _lastBookFullWidth = lastBookFullWidth;
+        _lastBookFullWidth = lastBookFullWidth,
+        _reloadData = reloadData;
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +31,9 @@ class BookCoverWidget extends StatelessWidget {
           builder: (BuildContext context, BoxConstraints constraints) {
             // double expandedWidth = constraints.maxWidth;
             return GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, "/read", arguments: {"bookId": _book.id, "api": _api});
+              onTap: () async {
+                await Navigator.pushNamed(context, "/read", arguments: {"bookId": _book.id, "api": _api});
+                if (_reloadData != null) await _reloadData!();
               },
               child: Stack(
                 children: [
