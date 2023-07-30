@@ -81,6 +81,10 @@ class _SettingsViewState extends State<SettingsView> {
               onPressed: () => Navigator.pushNamed(context, "/settings/storage"),
             ),
             ArrowRowButton(
+              text: "Network",
+              onPressed: () => Navigator.pushNamed(context, "/settings/network"),
+            ),
+            ArrowRowButton(
               text: "Donate",
               onPressed: () => Navigator.pushNamed(context, "/settings/donate"),
             ),

@@ -282,12 +282,14 @@ class _BrowseViewState extends State<BrowseView> {
                                   api: _api,
                                   lastBookFullWidth: index == _bookList.length - 1,
                                   reloadData: fetchBooks,
+                                  userPreferences: _userPreferences,
                                 ),
                                 if (index + 1 < _bookList.length)
                                   BookCoverWidget(
                                     book: _bookList[index + 1],
                                     api: _api,
                                     reloadData: fetchBooks,
+                                    userPreferences: _userPreferences,
                                   ),
                               ],
                             );

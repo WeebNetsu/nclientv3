@@ -16,6 +16,11 @@ class UserPreferencesModel {
   /// The doujin language of choice for the user
   String language = NHentaiConstants.languages.first;
 
+  /// If the user has slow internet, they can enable this
+  /// which will implement manual page reloads and some
+  /// other features to improve app performance
+  bool slowInternetMode = false;
+
   /// These are the tags the user does not want to see.
   List<String> blacklistedTags = [];
   List<String> blacklistedArtists = [];
@@ -35,6 +40,7 @@ class UserPreferencesModel {
       final encodedData = jsonEncode({
         "sort": sort.toString(),
         "language": language,
+        "slowInternetMode": slowInternetMode,
         "blacklistedTags": blacklistedTags,
         "blacklistedArtists": blacklistedArtists,
         "blacklistedGroups": blacklistedGroups,
@@ -93,6 +99,10 @@ class UserPreferencesModel {
 
     if (userDataJson['language'] != null) {
       language = userDataJson['language'].toString();
+    }
+
+    if (userDataJson['slowInternetMode'] != null) {
+      slowInternetMode = userDataJson['slowInternetMode'] == true ? true : false;
     }
 
     if (userDataJson['blacklistedTags'] != null) {

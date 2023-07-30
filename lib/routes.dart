@@ -11,5 +11,6 @@ Map<String, Widget Function(BuildContext)> routes = {
   '/settings': (context) => const SettingsView(),
   '/settings/donate': (context) => const SettingsDonateView(),
   '/settings/filters': (context) => const SettingsFiltersView(),
+  '/settings/network': (context) => const SettingsNetworkView(),
   '/settings/storage': (context) => const SettingsStorageView(),
 };

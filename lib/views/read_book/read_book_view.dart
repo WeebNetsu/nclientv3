@@ -231,6 +231,9 @@ class _ReadBookViewState extends State<ReadBookView> {
                                             tag: e,
                                             userPreferences: _userPreferences,
                                             api: _api,
+                                            reloadData: () async {
+                                              setState(() {});
+                                            },
                                           ),
                                         )
                                         .toList(),
@@ -250,6 +253,9 @@ class _ReadBookViewState extends State<ReadBookView> {
                                         tag: e,
                                         userPreferences: _userPreferences,
                                         api: _api,
+                                        reloadData: () async {
+                                          setState(() {});
+                                        },
                                       ),
                                     )
                                     .toList(),
@@ -269,6 +275,9 @@ class _ReadBookViewState extends State<ReadBookView> {
                                         tag: e,
                                         userPreferences: _userPreferences,
                                         api: _api,
+                                        reloadData: () async {
+                                          setState(() {});
+                                        },
                                       ),
                                     )
                                     .toList(),

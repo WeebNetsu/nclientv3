@@ -82,6 +82,84 @@ class _SearchViewState extends State<SearchView> {
         searchQuery += searchQuery.isEmpty ? '${_tag!.query}' : ' ${_tag!.query}';
       }
 
+      if (_userPreferences.blacklistedTags.isNotEmpty) {
+        for (final tag in _userPreferences.blacklistedTags) {
+          if (_tag?.name == tag) continue;
+
+          final query = nh.Tag.named(
+            type: nh.TagType.tag,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
+        }
+      }
+
+      if (_userPreferences.blacklistedArtists.isNotEmpty) {
+        for (final tag in _userPreferences.blacklistedArtists) {
+          if (_tag?.name == tag) continue;
+
+          final query = nh.Tag.named(
+            type: nh.TagType.artist,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
+        }
+      }
+
+      if (_userPreferences.blacklistedGroups.isNotEmpty) {
+        for (final tag in _userPreferences.blacklistedGroups) {
+          if (_tag?.name == tag) continue;
+
+          final query = nh.Tag.named(
+            type: nh.TagType.group,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
+        }
+      }
+
+      if (_userPreferences.whitelistedTags.isNotEmpty) {
+        for (final tag in _userPreferences.whitelistedTags) {
+          if (_tag?.name == tag) continue;
+
+          final query = nh.Tag.named(
+            type: nh.TagType.tag,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
+        }
+      }
+
+      if (_userPreferences.whitelistedArtists.isNotEmpty) {
+        for (final tag in _userPreferences.whitelistedArtists) {
+          if (_tag?.name == tag) continue;
+
+          final query = nh.Tag.named(
+            type: nh.TagType.artist,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
+        }
+      }
+
+      if (_userPreferences.whitelistedGroups.isNotEmpty) {
+        for (final tag in _userPreferences.whitelistedGroups) {
+          if (_tag?.name == tag) continue;
+
+          final query = nh.Tag.named(
+            type: nh.TagType.group,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
+        }
+      }
+
       final nh.Search searchRes = await (api ?? _api)!.searchSinglePage(
         searchQuery,
         sort: _userPreferences.sort,
@@ -241,11 +319,13 @@ class _SearchViewState extends State<SearchView> {
                                   book: _searchedBooks[index],
                                   api: _api!,
                                   lastBookFullWidth: index == _searchedBooks.length - 1,
+                                  userPreferences: _userPreferences,
                                 ),
                                 if (index + 1 < _searchedBooks.length)
                                   BookCoverWidget(
                                     book: _searchedBooks[index + 1],
                                     api: _api!,
+                                    userPreferences: _userPreferences,
                                   ),
                               ],
                             );

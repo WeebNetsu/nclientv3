@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nclientv3/models/user_preferences.dart';
 import 'package:nhentai/nhentai.dart' as nh;
 
 class BookCoverWidget extends StatelessWidget {
@@ -10,15 +11,18 @@ class BookCoverWidget extends StatelessWidget {
   /// styling
   final bool _lastBookFullWidth;
   final Future<void> Function()? _reloadData;
+  final UserPreferencesModel _userPreferences;
 
   const BookCoverWidget({
     super.key,
     required nh.Book book,
     required nh.API api,
+    required UserPreferencesModel userPreferences,
     bool lastBookFullWidth = false,
     Future<void> Function()? reloadData,
   })  : _book = book,
         _api = api,
+        _userPreferences = userPreferences,
         _lastBookFullWidth = lastBookFullWidth,
         _reloadData = reloadData;
 
@@ -33,7 +37,9 @@ class BookCoverWidget extends StatelessWidget {
             return GestureDetector(
               onTap: () async {
                 await Navigator.pushNamed(context, "/read", arguments: {"bookId": _book.id, "api": _api});
-                if (_reloadData != null) await _reloadData!();
+                if (!_userPreferences.slowInternetMode) {
+                  if (_reloadData != null) await _reloadData!();
+                }
               },
               child: Stack(
                 children: [

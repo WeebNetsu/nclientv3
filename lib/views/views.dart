@@ -7,4 +7,5 @@ export './search/search_view.dart';
 export './settings/settings_view.dart';
 export './settings_donate/settings_donate_view.dart';
 export './settings_filters/settings_filters.dart';
+export './settings_network/settings_network.dart';
 export './settings_storage/settings_storage_view.dart';

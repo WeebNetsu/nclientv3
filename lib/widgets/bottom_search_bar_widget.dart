@@ -85,9 +85,18 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
                   icon: const Icon(Icons.settings),
                   onPressed: () async {
                     await Navigator.pushNamed(context, "/settings");
-                    if (widget._reloadData != null) await widget._reloadData!();
+                    if (!_userPreferences.slowInternetMode) {
+                      if (widget._reloadData != null) await widget._reloadData!();
+                    }
                   },
                 ),
+                if (_userPreferences.slowInternetMode && widget._reloadData != null)
+                  IconButton(
+                    icon: const Icon(Icons.settings_backup_restore),
+                    onPressed: () async {
+                      await widget._reloadData!();
+                    },
+                  ),
                 Expanded(
                   child: TextField(
                     autofocus: false,
