@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:focused_menu/modals.dart';
 import 'package:nclientv3/models/user_preferences.dart';
+import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/nhentai.dart' as nh;
 
 class BookCoverWidget extends StatelessWidget {
@@ -26,6 +28,13 @@ class BookCoverWidget extends StatelessWidget {
         _lastBookFullWidth = lastBookFullWidth,
         _reloadData = reloadData;
 
+  Future<void> openDoujin(BuildContext context) async {
+    await Navigator.pushNamed(context, "/read", arguments: {"bookId": _book.id, "api": _api});
+    if (!_userPreferences.slowInternetMode) {
+      if (_reloadData != null) await _reloadData!();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -34,13 +43,38 @@ class BookCoverWidget extends StatelessWidget {
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             // double expandedWidth = constraints.maxWidth;
-            return GestureDetector(
+            return MenuHolder(
               onTap: () async {
-                await Navigator.pushNamed(context, "/read", arguments: {"bookId": _book.id, "api": _api});
-                if (!_userPreferences.slowInternetMode) {
-                  if (_reloadData != null) await _reloadData!();
-                }
+                await openDoujin(context);
               },
+              menuItems: [
+                FocusedMenuItem(
+                  title: const Text("Open"),
+                  backgroundColor: Colors.black54,
+                  trailingIcon: const Icon(Icons.open_in_browser),
+                  onPressed: () async {
+                    await openDoujin(context);
+                  },
+                ),
+                // FocusedMenuItem(
+                //   title: const Text("About"),
+                //   backgroundColor: Colors.black54,
+                //   trailingIcon: const Icon(Icons.question_mark_sharp),
+                //   onPressed: () {},
+                // ),
+                // FocusedMenuItem(
+                //   title: const Text("Hide"),
+                //   backgroundColor: Colors.black54,
+                //   trailingIcon: const Icon(Icons.hide_image),
+                //   onPressed: () => Navigator.pushNamed(context, "/profile"),
+                // ),
+                // FocusedMenuItem(
+                //   title: const Text("Download"),
+                //   backgroundColor: Colors.black54,
+                //   trailingIcon: const Icon(Icons.download),
+                //   onPressed: () => Navigator.pushNamed(context, "/settings"),
+                // ),
+              ],
               child: Stack(
                 children: [
                   LayoutBuilder(

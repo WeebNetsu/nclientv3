@@ -4,7 +4,7 @@ description: New and improved nHentai browsing app!
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 0.7.1+1
+version: 0.7.2+1
 
 environment:
   sdk: ">=3.0.5 <4.0.0"
@@ -45,6 +45,8 @@ dependencies:
   url_launcher: ^6.1.12
   # check the type of a file
   mime: ^1.0.4
+  # sexy popup/dropdown menu
+  focused_menu: ^1.0.5
   # flutter_local_notifications: ^15.1.0+1
   # * do not use below, it webview returns a different agent
   # fk_user_agent: ^2.1.0
