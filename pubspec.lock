@@ -606,6 +606,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.5"
+  wolt_modal_sheet:
+    dependency: "direct main"
+    description:
+      name: wolt_modal_sheet
+      sha256: "39e93201790082a1b7f7a590d6cb1b1a01dbb5c6c9086c962c84582d74acc9df"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   xdg_directories:
     dependency: transitive
     description:

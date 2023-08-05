@@ -27,8 +27,9 @@ class _ReadBookViewState extends State<ReadBookView> {
   nh.API? _api;
   nh.Book? _book;
   int _visiblePages = 5;
-  bool _downloadingBook = false;
   final _userPreferences = UserPreferencesModel();
+
+  bool _downloadingBook = false;
 
   /// if downloading the book, show total pages downloaded
   int? _totalPages;
@@ -145,177 +146,15 @@ class _ReadBookViewState extends State<ReadBookView> {
               child: ListView(
                 children: [
                   const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          book.title.english ?? book.title.japanese ?? "OwO! No title?!",
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: GestureDetector(
-                            onTap: () {
-                              copyTextToClipboard(context, book.id.toString());
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  "Code: ",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "${book.id}",
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Pages: ${book.pages.length}"),
-                              Text("Favorites: ${book.favorites}"),
-                            ],
-                          ),
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              const Text("Languages:"),
-                              Row(
-                                children: book.tags.languages
-                                    .map(
-                                      (e) => TextButton(
-                                        child: Text(e.name),
-                                        onPressed: () async {
-                                          await Navigator.pushNamed(context, "/search", arguments: {
-                                            "tag": e,
-                                            "api": _api,
-                                          });
-                                        },
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              const Text("Artists: "),
-                              Row(
-                                children: book.tags.artists.isEmpty
-                                    ? [const Text("N/A")]
-                                    : book.tags.artists
-                                        .map(
-                                          (e) => TagButtonWidget(
-                                            tag: e,
-                                            userPreferences: _userPreferences,
-                                            api: _api,
-                                            reloadData: () async {
-                                              setState(() {});
-                                            },
-                                          ),
-                                        )
-                                        .toList(),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              const Text("Tags:"),
-                              Row(
-                                children: book.tags.tags
-                                    .map(
-                                      (e) => TagButtonWidget(
-                                        tag: e,
-                                        userPreferences: _userPreferences,
-                                        api: _api,
-                                        reloadData: () async {
-                                          setState(() {});
-                                        },
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              const Text("Groups:"),
-                              Row(
-                                children: book.tags.groups
-                                    .map(
-                                      (e) => TagButtonWidget(
-                                        tag: e,
-                                        userPreferences: _userPreferences,
-                                        api: _api,
-                                        reloadData: () async {
-                                          setState(() {});
-                                        },
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Uploaded On: ${formatDateToString(book.uploaded)}"),
-                            IconButton(
-                              icon: const Icon(Icons.download),
-                              onPressed: _downloadingBook || _totalPagesDownloaded == _totalPages
-                                  ? null
-                                  : () => handleDownloadBook(book.id),
-                            )
-                          ],
-                        ),
-                        if (_downloadingBook && _totalPagesDownloaded < 1) const LinearProgressIndicator(),
-                        if (_totalPages != null)
-                          Column(
-                            children: [
-                              Text(
-                                _totalPagesDownloaded == _totalPages!
-                                    ? "Download Done!"
-                                    : "Downloading book, do not leave this page until it is done!",
-                              ),
-                              LinearProgressIndicator(
-                                value: _totalPagesDownloaded / _totalPages!,
-                                color: _totalPagesDownloaded == _totalPages! ? Colors.green : Colors.blue,
-                              ),
-                            ],
-                          ),
-                      ],
-                    ),
+                  BookInfoWidget(
+                    handleDownloadBook: handleDownloadBook,
+                    api: _api,
+                    book: book,
+                    userPreferences: _userPreferences,
+                    downloadingBook: _downloadingBook,
+                    totalPages: _totalPages,
+                    totalPagesDownloaded: _totalPagesDownloaded,
                   ),
-
                   // the actual doujin content
                   ListView.builder(
                     shrinkWrap: true, // Allow the ListView to take only the space it needs

@@ -31,6 +31,9 @@ class UserPreferencesModel {
   List<String> whitelistedArtists = [];
   List<String> whitelistedGroups = [];
 
+  /// These are the books the user has hidden
+//   List<String> blacklistedBooks = [];
+
   Future<bool> saveToFileData() async {
     Directory? appDir = await getAppDir();
 
@@ -47,6 +50,7 @@ class UserPreferencesModel {
         "whitelistedTags": whitelistedTags,
         "whitelistedArtists": whitelistedArtists,
         "whitelistedGroups": whitelistedGroups,
+        // "blacklistedBooks": blacklistedBooks,
         // "hideNsfw": hideNsfw,
       });
 
@@ -128,6 +132,10 @@ class UserPreferencesModel {
     if (userDataJson['whitelistedGroups'] != null) {
       whitelistedGroups = List<String>.from(userDataJson['whitelistedGroups']);
     }
+
+    // if (userDataJson['blacklistedBooks'] != null) {
+    //   blacklistedBooks = List<String>.from(userDataJson['blacklistedBooks']);
+    // }
 
     // not decoding it will leave quotes in the string
     // final bool? hideNsfwData = userDataJson['hideNsfw'];
