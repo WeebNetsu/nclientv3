@@ -55,7 +55,7 @@ class _BookCoverWidgetState extends State<BookCoverWidget> {
           Navigator.of(modalSheetContext).pop();
           pageIndexNotifier.value = 0;
         },
-        child: Icon(Icons.close),
+        child: const Icon(Icons.close),
       ),
       child: BookInfoWidget(
         // handleDownloadBook: widget._handleDownloadBook,
