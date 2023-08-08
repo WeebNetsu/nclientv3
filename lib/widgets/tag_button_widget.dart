@@ -100,6 +100,7 @@ class _TagButtonWidget extends State<TagButtonWidget> {
 
     await widget._userPreferences.saveToFileData();
     await widget._userPreferences.loadDataFromFile();
+    if (removeTag) (() => showMessage(context, "Removed tag"))();
     if (widget._reloadData != null) widget._reloadData!();
   }
 

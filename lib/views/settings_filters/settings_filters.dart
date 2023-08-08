@@ -96,7 +96,8 @@ class _SettingsFiltersViewState extends State<SettingsFiltersView> {
                 style: TextStyle(fontSize: 20),
               ),
               Text(
-                "Tags added here will not be seen in your search results or home page.",
+                "Tags added here will not be seen in your search results or home page."
+                "Double tap to remove, hold to move to whitelist",
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey[300],
@@ -110,15 +111,18 @@ class _SettingsFiltersViewState extends State<SettingsFiltersView> {
                 alignment: Alignment.topLeft,
                 child: const Text("Blacklisted Tags"),
               ),
-              Row(
-                children: _userPreferences.blacklistedTags
-                    .map(
-                      (e) => TagButtonWidget(
-                          tag: nh.Tag.named(type: nh.TagType.tag, name: e),
-                          userPreferences: _userPreferences,
-                          reloadData: reloadData),
-                    )
-                    .toList(),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _userPreferences.blacklistedTags
+                      .map(
+                        (e) => TagButtonWidget(
+                            tag: nh.Tag.named(type: nh.TagType.tag, name: e),
+                            userPreferences: _userPreferences,
+                            reloadData: reloadData),
+                      )
+                      .toList(),
+                ),
               ),
               const SizedBox(height: 10),
 
@@ -127,15 +131,18 @@ class _SettingsFiltersViewState extends State<SettingsFiltersView> {
                 alignment: Alignment.topLeft,
                 child: const Text("Blacklisted Artists"),
               ),
-              Row(
-                children: _userPreferences.blacklistedArtists
-                    .map(
-                      (e) => TagButtonWidget(
-                          tag: nh.Tag.named(type: nh.TagType.artist, name: e),
-                          userPreferences: _userPreferences,
-                          reloadData: reloadData),
-                    )
-                    .toList(),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _userPreferences.blacklistedArtists
+                      .map(
+                        (e) => TagButtonWidget(
+                            tag: nh.Tag.named(type: nh.TagType.artist, name: e),
+                            userPreferences: _userPreferences,
+                            reloadData: reloadData),
+                      )
+                      .toList(),
+                ),
               ),
               const SizedBox(height: 10),
 
@@ -144,15 +151,18 @@ class _SettingsFiltersViewState extends State<SettingsFiltersView> {
                 alignment: Alignment.topLeft,
                 child: const Text("Blacklisted Groups"),
               ),
-              Row(
-                children: _userPreferences.blacklistedGroups
-                    .map(
-                      (e) => TagButtonWidget(
-                          tag: nh.Tag.named(type: nh.TagType.group, name: e),
-                          userPreferences: _userPreferences,
-                          reloadData: reloadData),
-                    )
-                    .toList(),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _userPreferences.blacklistedGroups
+                      .map(
+                        (e) => TagButtonWidget(
+                            tag: nh.Tag.named(type: nh.TagType.group, name: e),
+                            userPreferences: _userPreferences,
+                            reloadData: reloadData),
+                      )
+                      .toList(),
+                ),
               ),
               const SizedBox(height: 10),
               Divider(color: Colors.grey[500]),
@@ -163,7 +173,8 @@ class _SettingsFiltersViewState extends State<SettingsFiltersView> {
                 style: TextStyle(fontSize: 20),
               ),
               Text(
-                "Tags added here will always be seen in your search results or home page.",
+                "Tags added here will always be seen in your search results or home page."
+                "Double tap to remove, hold to move to blacklist",
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey[300],
@@ -176,15 +187,18 @@ class _SettingsFiltersViewState extends State<SettingsFiltersView> {
                 alignment: Alignment.topLeft,
                 child: const Text("Whitelisted Tags"),
               ),
-              Row(
-                children: _userPreferences.whitelistedTags
-                    .map(
-                      (e) => TagButtonWidget(
-                          tag: nh.Tag.named(type: nh.TagType.tag, name: e),
-                          userPreferences: _userPreferences,
-                          reloadData: reloadData),
-                    )
-                    .toList(),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _userPreferences.whitelistedTags
+                      .map(
+                        (e) => TagButtonWidget(
+                            tag: nh.Tag.named(type: nh.TagType.tag, name: e),
+                            userPreferences: _userPreferences,
+                            reloadData: reloadData),
+                      )
+                      .toList(),
+                ),
               ),
               const SizedBox(height: 10),
 
@@ -193,15 +207,18 @@ class _SettingsFiltersViewState extends State<SettingsFiltersView> {
                 alignment: Alignment.topLeft,
                 child: const Text("Whitelisted Artists"),
               ),
-              Row(
-                children: _userPreferences.whitelistedArtists
-                    .map(
-                      (e) => TagButtonWidget(
-                          tag: nh.Tag.named(type: nh.TagType.artist, name: e),
-                          userPreferences: _userPreferences,
-                          reloadData: reloadData),
-                    )
-                    .toList(),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _userPreferences.whitelistedArtists
+                      .map(
+                        (e) => TagButtonWidget(
+                            tag: nh.Tag.named(type: nh.TagType.artist, name: e),
+                            userPreferences: _userPreferences,
+                            reloadData: reloadData),
+                      )
+                      .toList(),
+                ),
               ),
               const SizedBox(height: 10),
 
@@ -210,15 +227,18 @@ class _SettingsFiltersViewState extends State<SettingsFiltersView> {
                 alignment: Alignment.topLeft,
                 child: const Text("Whitelisted Groups"),
               ),
-              Row(
-                children: _userPreferences.whitelistedGroups
-                    .map(
-                      (e) => TagButtonWidget(
-                          tag: nh.Tag.named(type: nh.TagType.group, name: e),
-                          userPreferences: _userPreferences,
-                          reloadData: reloadData),
-                    )
-                    .toList(),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _userPreferences.whitelistedGroups
+                      .map(
+                        (e) => TagButtonWidget(
+                            tag: nh.Tag.named(type: nh.TagType.group, name: e),
+                            userPreferences: _userPreferences,
+                            reloadData: reloadData),
+                      )
+                      .toList(),
+                ),
               ),
               const SizedBox(height: 10),
               Divider(color: Colors.grey[500]),

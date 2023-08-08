@@ -42,9 +42,6 @@ class BookInfoWidget extends StatefulWidget {
 class _BookInfoWidgetState extends State<BookInfoWidget> {
   @override
   Widget build(BuildContext context) {
-    print(widget._totalPages);
-    print(widget._totalPagesDownloaded);
-    print(widget._totalPages);
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Column(
