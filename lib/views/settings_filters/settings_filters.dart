@@ -22,12 +22,9 @@ class _SettingsFiltersViewState extends State<SettingsFiltersView> {
   final _userPreferences = UserPreferencesModel();
 
   bool _loading = true;
-  bool _x = false;
 
   Future<void> reloadData() async {
-    setState(() {
-      _x = true;
-    });
+    setState(() {});
   }
 
   @override
@@ -96,8 +93,8 @@ class _SettingsFiltersViewState extends State<SettingsFiltersView> {
                 style: TextStyle(fontSize: 20),
               ),
               Text(
-                "Tags added here will not be seen in your search results or home page."
-                "Double tap to remove, hold to move to whitelist",
+                "Tags added here will not be seen in your search results or home page. "
+                "Double tap to remove, hold to move to whitelist.",
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey[300],
@@ -173,8 +170,8 @@ class _SettingsFiltersViewState extends State<SettingsFiltersView> {
                 style: TextStyle(fontSize: 20),
               ),
               Text(
-                "Tags added here will always be seen in your search results or home page."
-                "Double tap to remove, hold to move to blacklist",
+                "Tags added here will always be seen in your search results or home page. "
+                "Double tap to remove, hold to move to blacklist.",
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey[300],
