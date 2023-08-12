@@ -116,6 +116,17 @@ class _BrowseViewState extends State<BrowseView> {
         }
       }
 
+      if (_userPreferences.blacklistedCharacters.isNotEmpty) {
+        for (final tag in _userPreferences.blacklistedCharacters) {
+          final query = nh.Tag.named(
+            type: nh.TagType.character,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
+        }
+      }
+
       if (_userPreferences.whitelistedTags.isNotEmpty) {
         for (final tag in _userPreferences.whitelistedTags) {
           final query = nh.Tag.named(
@@ -142,6 +153,17 @@ class _BrowseViewState extends State<BrowseView> {
         for (final tag in _userPreferences.whitelistedGroups) {
           final query = nh.Tag.named(
             type: nh.TagType.group,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
+        }
+      }
+
+      if (_userPreferences.whitelistedCharacters.isNotEmpty) {
+        for (final tag in _userPreferences.whitelistedCharacters) {
+          final query = nh.Tag.named(
+            type: nh.TagType.character,
             name: tag,
           ).query;
 

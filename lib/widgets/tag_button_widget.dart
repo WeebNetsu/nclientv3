@@ -37,14 +37,18 @@ class _TagButtonWidget extends State<TagButtonWidget> {
 
   /// This will blacklist a tag, if the tag is already blacklisted, it will remove it from the list
   Future<void> whiteOrBlacklistTag(String tagName,
-      {bool artist = false, bool tag = false, bool group = false, bool removeTag = false}) async {
+      {bool artist = false,
+      bool tag = false,
+      bool group = false,
+      bool removeTag = false,
+      bool character = false}) async {
     // only one is allowed to be changed at a time, this is for safety
     if (artist && tag || artist && group || group && tag) {
       throw Exception("Only one of artist, tag, or group can be changed at a time");
     }
 
     // at least 1 tag is required
-    if (!artist && !tag && !group) {
+    if (!artist && !tag && !group && !character) {
       throw Exception("At least 1 tag is required");
     }
 
@@ -96,6 +100,22 @@ class _TagButtonWidget extends State<TagButtonWidget> {
         // add it to the whitelist
         if (!removeTag) widget._userPreferences.whitelistedGroups.add(tagName);
       }
+    } else if (character) {
+      final blacklistIndex = widget._userPreferences.blacklistedCharacters.indexOf(tagName);
+      final whitelistIndex = widget._userPreferences.whitelistedCharacters.indexOf(tagName);
+
+      if (blacklistIndex > -1) {
+        // remove from blacklist if it is there
+        widget._userPreferences.blacklistedCharacters.removeAt(blacklistIndex);
+        if (!removeTag) widget._userPreferences.whitelistedCharacters.add(tagName);
+      } else if (whitelistIndex > -1) {
+        // remove from whitelist if it is there and add it to the blacklist
+        widget._userPreferences.whitelistedCharacters.removeAt(whitelistIndex);
+        if (!removeTag) widget._userPreferences.blacklistedCharacters.add(tagName);
+      } else {
+        // add it to the whitelist
+        if (!removeTag) widget._userPreferences.whitelistedCharacters.add(tagName);
+      }
     }
 
     await widget._userPreferences.saveToFileData();
@@ -122,6 +142,7 @@ class _TagButtonWidget extends State<TagButtonWidget> {
             artist: widget._tag.type == nh.TagType.artist,
             tag: widget._tag.type == nh.TagType.tag,
             group: widget._tag.type == nh.TagType.group,
+            character: widget._tag.type == nh.TagType.character,
           );
         },
         onDoubleTap: () async {
@@ -130,6 +151,7 @@ class _TagButtonWidget extends State<TagButtonWidget> {
             artist: widget._tag.type == nh.TagType.artist,
             tag: widget._tag.type == nh.TagType.tag,
             group: widget._tag.type == nh.TagType.group,
+            character: widget._tag.type == nh.TagType.character,
             removeTag: true,
           );
         },
@@ -151,13 +173,15 @@ class _TagButtonWidget extends State<TagButtonWidget> {
 
               if (pref.blacklistedTags.contains(widget._tag.name) ||
                   pref.blacklistedArtists.contains(widget._tag.name) ||
-                  pref.blacklistedGroups.contains(widget._tag.name)) {
+                  pref.blacklistedGroups.contains(widget._tag.name) ||
+                  pref.blacklistedCharacters.contains(widget._tag.name)) {
                 return Colors.red;
               }
 
               if (pref.whitelistedTags.contains(widget._tag.name) ||
                   pref.whitelistedArtists.contains(widget._tag.name) ||
-                  pref.whitelistedGroups.contains(widget._tag.name)) {
+                  pref.whitelistedGroups.contains(widget._tag.name) ||
+                  pref.whitelistedCharacters.contains(widget._tag.name)) {
                 return Colors.green;
               }
 

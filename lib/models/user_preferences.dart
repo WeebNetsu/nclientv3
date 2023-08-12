@@ -25,11 +25,13 @@ class UserPreferencesModel {
   List<String> blacklistedTags = [];
   List<String> blacklistedArtists = [];
   List<String> blacklistedGroups = [];
+  List<String> blacklistedCharacters = [];
 
   /// These are the tags the user always wants to see.
   List<String> whitelistedTags = [];
   List<String> whitelistedArtists = [];
   List<String> whitelistedGroups = [];
+  List<String> whitelistedCharacters = [];
 
   /// These are the books the user has hidden
 //   List<String> blacklistedBooks = [];
@@ -47,9 +49,11 @@ class UserPreferencesModel {
         "blacklistedTags": blacklistedTags,
         "blacklistedArtists": blacklistedArtists,
         "blacklistedGroups": blacklistedGroups,
+        "blacklistedCharacters": blacklistedCharacters,
         "whitelistedTags": whitelistedTags,
         "whitelistedArtists": whitelistedArtists,
         "whitelistedGroups": whitelistedGroups,
+        "whitelistedCharacters": whitelistedCharacters,
         // "blacklistedBooks": blacklistedBooks,
         // "hideNsfw": hideNsfw,
       });
@@ -121,6 +125,10 @@ class UserPreferencesModel {
       blacklistedGroups = List<String>.from(userDataJson['blacklistedGroups']);
     }
 
+    if (userDataJson['blacklistedCharacters'] != null) {
+      blacklistedCharacters = List<String>.from(userDataJson['blacklistedCharacters']);
+    }
+
     if (userDataJson['whitelistedTags'] != null) {
       whitelistedTags = List<String>.from(userDataJson['whitelistedTags']);
     }
@@ -131,6 +139,10 @@ class UserPreferencesModel {
 
     if (userDataJson['whitelistedGroups'] != null) {
       whitelistedGroups = List<String>.from(userDataJson['whitelistedGroups']);
+    }
+
+    if (userDataJson['whitelistedCharacters'] != null) {
+      whitelistedCharacters = List<String>.from(userDataJson['whitelistedCharacters']);
     }
 
     // if (userDataJson['blacklistedBooks'] != null) {

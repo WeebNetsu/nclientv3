@@ -170,6 +170,30 @@ class _BookInfoWidgetState extends State<BookInfoWidget> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
+                Text(style: TextStyle(color: widget._textColor), "Characters: "),
+                Row(
+                  children: widget._book.tags.characters.isEmpty
+                      ? [Text(style: TextStyle(color: widget._textColor), "N/A")]
+                      : widget._book.tags.characters
+                          .map(
+                            (e) => TagButtonWidget(
+                              tag: e,
+                              userPreferences: widget._userPreferences,
+                              api: widget._api,
+                              reloadData: () async {
+                                setState(() {});
+                              },
+                            ),
+                          )
+                          .toList(),
+                ),
+              ],
+            ),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
                 Text(style: TextStyle(color: widget._textColor), "Groups:"),
                 Row(
                   children: widget._book.tags.groups

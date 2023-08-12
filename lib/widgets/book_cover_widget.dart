@@ -114,10 +114,10 @@ class _BookCoverWidgetState extends State<BookCoverWidget> {
                             return WoltModalType.dialog;
                           }
                         },
-                        onModalDismissedWithBarrierTap: () {
-                          debugPrint('Closed modal sheet with barrier tap');
-                          pageIndexNotifier.value = 0;
-                        },
+                        // onModalDismissedWithBarrierTap: () {
+                        //   debugPrint('Closed modal sheet with barrier tap');
+                        //   pageIndexNotifier.value = 0;
+                        // },
                         maxDialogWidth: 560,
                         minDialogWidth: 400,
                         minPageHeight: 0.4,

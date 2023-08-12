@@ -108,6 +108,19 @@ class _SearchViewState extends State<SearchView> {
         }
       }
 
+      if (_userPreferences.blacklistedCharacters.isNotEmpty) {
+        for (final tag in _userPreferences.blacklistedCharacters) {
+          if (_tag?.name == tag) continue;
+
+          final query = nh.Tag.named(
+            type: nh.TagType.character,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
+        }
+      }
+
       if (_userPreferences.blacklistedGroups.isNotEmpty) {
         for (final tag in _userPreferences.blacklistedGroups) {
           if (_tag?.name == tag) continue;
@@ -140,6 +153,19 @@ class _SearchViewState extends State<SearchView> {
 
           final query = nh.Tag.named(
             type: nh.TagType.artist,
+            name: tag,
+          ).query;
+
+          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
+        }
+      }
+
+      if (_userPreferences.whitelistedCharacters.isNotEmpty) {
+        for (final tag in _userPreferences.whitelistedCharacters) {
+          if (_tag?.name == tag) continue;
+
+          final query = nh.Tag.named(
+            type: nh.TagType.character,
             name: tag,
           ).query;
 
