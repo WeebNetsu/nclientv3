@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:nclientv3/models/models.dart';
+import 'package:nclientv3/utils/utils.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/before_request_add_cookies.dart';
 import 'package:nhentai/nhentai.dart' as nh;
@@ -72,104 +73,7 @@ class _BrowseViewState extends State<BrowseView> {
     try {
       nh.Search searchedBooks;
 
-      String searchQuery = "";
-
-      if (_userPreferences.language != "*") {
-        final languageQuery = nh.Tag.named(
-          type: nh.TagType.language,
-          name: _userPreferences.language,
-        ).query;
-
-        searchQuery += "$languageQuery";
-      }
-
-      if (_userPreferences.blacklistedTags.isNotEmpty) {
-        for (final tag in _userPreferences.blacklistedTags) {
-          final query = nh.Tag.named(
-            type: nh.TagType.tag,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
-        }
-      }
-
-      if (_userPreferences.blacklistedArtists.isNotEmpty) {
-        for (final tag in _userPreferences.blacklistedArtists) {
-          final query = nh.Tag.named(
-            type: nh.TagType.artist,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
-        }
-      }
-
-      if (_userPreferences.blacklistedGroups.isNotEmpty) {
-        for (final tag in _userPreferences.blacklistedGroups) {
-          final query = nh.Tag.named(
-            type: nh.TagType.group,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
-        }
-      }
-
-      if (_userPreferences.blacklistedCharacters.isNotEmpty) {
-        for (final tag in _userPreferences.blacklistedCharacters) {
-          final query = nh.Tag.named(
-            type: nh.TagType.character,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
-        }
-      }
-
-      if (_userPreferences.whitelistedTags.isNotEmpty) {
-        for (final tag in _userPreferences.whitelistedTags) {
-          final query = nh.Tag.named(
-            type: nh.TagType.tag,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
-        }
-      }
-
-      if (_userPreferences.whitelistedArtists.isNotEmpty) {
-        for (final tag in _userPreferences.whitelistedArtists) {
-          final query = nh.Tag.named(
-            type: nh.TagType.artist,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
-        }
-      }
-
-      if (_userPreferences.whitelistedGroups.isNotEmpty) {
-        for (final tag in _userPreferences.whitelistedGroups) {
-          final query = nh.Tag.named(
-            type: nh.TagType.group,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
-        }
-      }
-
-      if (_userPreferences.whitelistedCharacters.isNotEmpty) {
-        for (final tag in _userPreferences.whitelistedCharacters) {
-          final query = nh.Tag.named(
-            type: nh.TagType.character,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
-        }
-      }
+      String searchQuery = generateSearchQueryString("", _userPreferences, searchTag: null);
 
       if (searchQuery.isEmpty) searchQuery = "*";
 

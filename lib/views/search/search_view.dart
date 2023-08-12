@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:nclientv3/constants/constants.dart';
 import 'package:nclientv3/models/models.dart';
+import 'package:nclientv3/utils/utils.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/nhentai.dart' as nh;
 
@@ -67,127 +68,8 @@ class _SearchViewState extends State<SearchView> {
 
       await _userPreferences.loadDataFromFile();
 
-      String searchQuery = text;
-
-      if (_userPreferences.language != "*") {
-        final languageQuery = nh.Tag.named(
-          type: nh.TagType.language,
-          name: _userPreferences.language,
-        ).query;
-
-        searchQuery += searchQuery.isEmpty ? "$languageQuery" : " $languageQuery";
-      }
-
-      if (_tag != null) {
-        searchQuery += searchQuery.isEmpty ? '${_tag!.query}' : ' ${_tag!.query}';
-      }
-
-      if (_userPreferences.blacklistedTags.isNotEmpty) {
-        for (final tag in _userPreferences.blacklistedTags) {
-          if (_tag?.name == tag) continue;
-
-          final query = nh.Tag.named(
-            type: nh.TagType.tag,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
-        }
-      }
-
-      if (_userPreferences.blacklistedArtists.isNotEmpty) {
-        for (final tag in _userPreferences.blacklistedArtists) {
-          if (_tag?.name == tag) continue;
-
-          final query = nh.Tag.named(
-            type: nh.TagType.artist,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
-        }
-      }
-
-      if (_userPreferences.blacklistedCharacters.isNotEmpty) {
-        for (final tag in _userPreferences.blacklistedCharacters) {
-          if (_tag?.name == tag) continue;
-
-          final query = nh.Tag.named(
-            type: nh.TagType.character,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
-        }
-      }
-
-      if (_userPreferences.blacklistedGroups.isNotEmpty) {
-        for (final tag in _userPreferences.blacklistedGroups) {
-          if (_tag?.name == tag) continue;
-
-          final query = nh.Tag.named(
-            type: nh.TagType.group,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '-$query' : ' -$query';
-        }
-      }
-
-      if (_userPreferences.whitelistedTags.isNotEmpty) {
-        for (final tag in _userPreferences.whitelistedTags) {
-          if (_tag?.name == tag) continue;
-
-          final query = nh.Tag.named(
-            type: nh.TagType.tag,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
-        }
-      }
-
-      if (_userPreferences.whitelistedArtists.isNotEmpty) {
-        for (final tag in _userPreferences.whitelistedArtists) {
-          if (_tag?.name == tag) continue;
-
-          final query = nh.Tag.named(
-            type: nh.TagType.artist,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
-        }
-      }
-
-      if (_userPreferences.whitelistedCharacters.isNotEmpty) {
-        for (final tag in _userPreferences.whitelistedCharacters) {
-          if (_tag?.name == tag) continue;
-
-          final query = nh.Tag.named(
-            type: nh.TagType.character,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
-        }
-      }
-
-      if (_userPreferences.whitelistedGroups.isNotEmpty) {
-        for (final tag in _userPreferences.whitelistedGroups) {
-          if (_tag?.name == tag) continue;
-
-          final query = nh.Tag.named(
-            type: nh.TagType.group,
-            name: tag,
-          ).query;
-
-          searchQuery += searchQuery.isEmpty ? '$query' : ' $query';
-        }
-      }
-
       final nh.Search searchRes = await (api ?? _api)!.searchSinglePage(
-        searchQuery,
+        generateSearchQueryString(text, _userPreferences, searchTag: _tag),
         sort: _userPreferences.sort,
       );
 
