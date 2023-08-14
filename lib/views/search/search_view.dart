@@ -24,23 +24,26 @@ class SearchView extends StatefulWidget {
 class _SearchViewState extends State<SearchView> {
   final FocusNode _focusNode = FocusNode();
   final _userPreferences = UserPreferencesModel();
+  final ScrollController _scrollController = ScrollController();
 
   Map<String, dynamic>? arguments;
   String? _errorMessage;
   nh.API? _api;
+  int _currentPage = 1;
 
   /// if searching for a specific tag
   nh.Tag? _tag;
-  List<nh.Book> _searchedBooks = [];
-  String? _lastSearchPrompt;
+  final List<nh.Book> _searchedBooks = [];
+  String _lastSearchPrompt = "";
 
   /// Similar to _loadingBooks, but does not store a function
   bool _loading = false;
+  bool _loadingNextPage = false;
 
   late StreamSubscription<bool> keyboardSubscription;
-  late Future<void> _loadingBooks = searchBooks('*');
+  late Future<void> _loadingBooks = _searchBooks('*');
 
-  Future<void> searchBooks(String text, {nh.API? api}) async {
+  Future<void> _searchBooks(String text, {nh.API? api, bool nextPage = false}) async {
     setState(() {
       _errorMessage = null;
       _lastSearchPrompt = text;
@@ -53,7 +56,13 @@ class _SearchViewState extends State<SearchView> {
 
     try {
       setState(() {
-        _loading = true;
+        if (nextPage) {
+          _loadingNextPage = true;
+          _currentPage += 1;
+        } else {
+          _currentPage = 1;
+          _loading = true;
+        }
       });
 
       final code = int.tryParse(text);
@@ -71,11 +80,14 @@ class _SearchViewState extends State<SearchView> {
       final nh.Search searchRes = await (api ?? _api)!.searchSinglePage(
         generateSearchQueryString(text, _userPreferences, searchTag: _tag),
         sort: _userPreferences.sort,
+        page: _currentPage,
       );
 
       setState(() {
-        _searchedBooks = searchRes.books;
+        if (!nextPage) _searchedBooks.clear();
+        _searchedBooks.addAll(searchRes.books);
         _loading = false;
+        _loadingNextPage = false;
       });
     } on nh.ApiException {
       setState(() {
@@ -90,12 +102,32 @@ class _SearchViewState extends State<SearchView> {
     } finally {
       setState(() {
         _loading = false;
+        _loadingNextPage = false;
       });
     }
   }
 
+  Future<void> _searchNextPage() async {
+    await _searchBooks(_lastSearchPrompt, nextPage: true);
+  }
+
   Future<void> _reloadDataOnSpot() async {
-    await searchBooks(_lastSearchPrompt ?? '', api: _api);
+    await _searchBooks(_lastSearchPrompt, api: _api);
+  }
+
+  void _scrollListener() {
+    if (_userPreferences.slowInternetMode) return;
+
+    if (_scrollController.position.atEdge) {
+      if (_scrollController.position.pixels == 0) {
+        // Reached the top of the scroll view
+      } else {
+        // Reached the bottom of the scroll view
+        setState(() {
+          _searchNextPage();
+        });
+      }
+    }
   }
 
   @override
@@ -103,7 +135,7 @@ class _SearchViewState extends State<SearchView> {
     super.initState();
 
     var keyboardVisibilityController = KeyboardVisibilityController();
-    _loadingBooks = searchBooks("*", api: null);
+    _loadingBooks = _searchBooks("*", api: null);
 
     // Subscribe
     keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
@@ -118,32 +150,23 @@ class _SearchViewState extends State<SearchView> {
       final String? searchText = arguments?['searchText'];
       final nh.API? api = arguments?['api'];
 
-      //   nh.Tag? generatedTag;
-      //   if (searchText?.startsWith("Tag(") == true) {
-      //     // tag would generally look like this: "Tag(name:id)"
-      //     final tagDetails = searchText!.split("(").last.split(")").first.split(":");
-      //     final tagName = tagDetails.first;
-      //     final tagId = int.tryParse(tagDetails.last);
-
-      //     if (tagId != null) {
-      //       generatedTag = nh.Tag(
-      //         id: tagId,
-      //         type: nh.TagType.tag,
-      //         name: tagName,
-      //         count: 25,
-      //         url: '/tag/$tagName/',
-      //       );
-      //     }
-      //   }
-
       _api = api;
       _tag = arguments?['tag'];
-      _lastSearchPrompt = searchText;
-      _loadingBooks = searchBooks(
-        _lastSearchPrompt ?? "",
+      _lastSearchPrompt = searchText ?? '';
+      _loadingBooks = _searchBooks(
+        _lastSearchPrompt,
         api: api,
       );
     });
+
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -161,7 +184,7 @@ class _SearchViewState extends State<SearchView> {
             MessagePageWidget(text: _errorMessage!),
             BottomSearchBarWidget(
               focusNode: _focusNode,
-              handleSearch: searchBooks,
+              handleSearch: _searchBooks,
             ),
           ],
         ),
@@ -174,9 +197,7 @@ class _SearchViewState extends State<SearchView> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Display a loader while the future is executing
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             debugPrint("Error occurred: ${snapshot.error}");
             // Handle any error that occurred during the future execution
@@ -193,7 +214,7 @@ class _SearchViewState extends State<SearchView> {
                   ),
                   BottomSearchBarWidget(
                     focusNode: _focusNode,
-                    handleSearch: searchBooks,
+                    handleSearch: _searchBooks,
                   ),
                 ],
               ),
@@ -201,14 +222,13 @@ class _SearchViewState extends State<SearchView> {
           }
 
           if (_loading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           return Stack(
             children: [
               SingleChildScrollView(
+                controller: _scrollController,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
@@ -237,22 +257,24 @@ class _SearchViewState extends State<SearchView> {
                                   ),
                               ],
                             );
-                          } else {
-                            // Skip rendering for odd-indexed items
-                            return Row(
-                              children: [Container()],
-                            );
                           }
+                          // Skip rendering for odd-indexed items
+                          return Row(children: [Container()]);
                         },
                       ),
-                      const SizedBox(height: 40),
+                      if (_searchedBooks.length >= 25)
+                        NextPageLoaderWidget(
+                          userPreferences: _userPreferences,
+                          loadingNextPage: _loadingNextPage,
+                          fetchData: _searchNextPage,
+                        ),
                     ],
                   ),
                 ),
               ),
               BottomSearchBarWidget(
                 focusNode: _focusNode,
-                handleSearch: searchBooks,
+                handleSearch: _searchBooks,
                 reloadData: _reloadDataOnSpot,
                 defaultText: _lastSearchPrompt,
               ),

@@ -26,6 +26,7 @@ class _BrowseViewState extends State<BrowseView> {
   final _userData = UserDataModel();
   final FocusNode _focusNode = FocusNode();
   final _userPreferences = UserPreferencesModel();
+  final ScrollController _scrollController = ScrollController();
 
   late nh.API _api;
   late StreamSubscription<bool> keyboardSubscription;
@@ -35,14 +36,16 @@ class _BrowseViewState extends State<BrowseView> {
 
   /// similar to loadingBooks, but does not store a function
   bool _loading = false;
+  bool _loadingNextPage = false;
   late Future<void> _loadingBooks;
-  List<nh.Book> _bookList = [];
+  final List<nh.Book> _bookList = [];
+  int _currentPage = 1;
 
-  Future<void> setNotRobot({bool? clearData = false}) async {
+  Future<void> _setNotRobot({bool? clearData = false}) async {
     await Navigator.pushNamed(context, "/not-a-robot", arguments: {"clearData": clearData});
   }
 
-  Future<void> fetchBooks() async {
+  Future<void> _fetchBooks({bool nextPage = false}) async {
     if (_connectedToInternet == false) return;
 
     await _userData.loadDataFromFile();
@@ -51,8 +54,8 @@ class _BrowseViewState extends State<BrowseView> {
     final userAgent = _userData.userAgent;
 
     if (cookies == null || cookies.isEmpty || userAgent == null || userAgent.isEmpty) {
-      await setNotRobot();
-      return fetchBooks();
+      await _setNotRobot();
+      return _fetchBooks();
     }
 
     final api = nh.API(
@@ -65,7 +68,12 @@ class _BrowseViewState extends State<BrowseView> {
 
     setState(() {
       _api = api;
-      _loading = true;
+      if (nextPage) {
+        _loadingNextPage = true;
+        if (nextPage) _currentPage += 1;
+      } else {
+        _loading = true;
+      }
     });
 
     await _userPreferences.loadDataFromFile();
@@ -81,11 +89,12 @@ class _BrowseViewState extends State<BrowseView> {
       searchedBooks = await _api.searchSinglePage(
         searchQuery,
         sort: _userPreferences.sort,
+        page: _currentPage,
       );
 
       try {
         setState(() {
-          _bookList = searchedBooks.books;
+          _bookList.addAll(searchedBooks.books);
         });
       } on nh.ApiException {
         setState(() {
@@ -105,16 +114,36 @@ class _BrowseViewState extends State<BrowseView> {
       debugPrint('headers ${e.request?.headers}');
       debugPrint('url ${e.request?.url}');
 
-      await setNotRobot(clearData: true);
-      return fetchBooks();
+      await _setNotRobot(clearData: true);
+      return _fetchBooks();
     } catch (e) {
       debugPrint("Error on fetching books: $e");
-      await setNotRobot(clearData: true);
-      return fetchBooks();
+      await _setNotRobot(clearData: true);
+      return _fetchBooks();
     } finally {
       setState(() {
         _loading = false;
+        _loadingNextPage = false;
       });
+    }
+  }
+
+  Future<void> _searchNextPage() async {
+    await _fetchBooks(nextPage: true);
+  }
+
+  void _scrollListener() {
+    if (_userPreferences.slowInternetMode) return;
+
+    if (_scrollController.position.atEdge) {
+      if (_scrollController.position.pixels == 0) {
+        // Reached the top of the scroll view
+      } else {
+        // Reached the bottom of the scroll view
+        setState(() {
+          _searchNextPage();
+        });
+      }
     }
   }
 
@@ -125,7 +154,7 @@ class _BrowseViewState extends State<BrowseView> {
     InternetConnectivity().hasInternetConnection.then((hasInternet) {
       setState(() {
         _connectedToInternet = hasInternet;
-        _loadingBooks = fetchBooks();
+        _loadingBooks = _fetchBooks();
       });
     });
 
@@ -138,6 +167,15 @@ class _BrowseViewState extends State<BrowseView> {
         _focusNode.unfocus();
       }
     });
+
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -168,9 +206,7 @@ class _BrowseViewState extends State<BrowseView> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Display a loader while the future is executing
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             debugPrint("Error occurred: ${snapshot.error}");
             // Handle any error that occurred during the future execution
@@ -180,15 +216,14 @@ class _BrowseViewState extends State<BrowseView> {
             );
           }
 
-          if (_loading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          if (_loading && !_loadingNextPage) {
+            return const Center(child: CircularProgressIndicator());
           }
 
           return Stack(
             children: [
               SingleChildScrollView(
+                controller: _scrollController,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
@@ -207,29 +242,29 @@ class _BrowseViewState extends State<BrowseView> {
                                   book: _bookList[index],
                                   api: _api,
                                   lastBookFullWidth: index == _bookList.length - 1,
-                                  reloadData: fetchBooks,
+                                  reloadData: _fetchBooks,
                                   userPreferences: _userPreferences,
                                 ),
                                 if (index + 1 < _bookList.length)
                                   BookCoverWidget(
                                     book: _bookList[index + 1],
                                     api: _api,
-                                    reloadData: fetchBooks,
+                                    reloadData: _fetchBooks,
                                     userPreferences: _userPreferences,
                                   ),
                               ],
                             );
-                          } else {
-                            // Skip rendering for odd-indexed items
-                            return Row(
-                              children: [
-                                Container(),
-                              ],
-                            );
                           }
+
+                          // Skip rendering for odd-indexed items
+                          return Row(children: [Container()]);
                         },
                       ),
-                      const SizedBox(height: 40),
+                      NextPageLoaderWidget(
+                        userPreferences: _userPreferences,
+                        loadingNextPage: _loadingNextPage,
+                        fetchData: _searchNextPage,
+                      ),
                     ],
                   ),
                 ),
@@ -237,7 +272,7 @@ class _BrowseViewState extends State<BrowseView> {
               BottomSearchBarWidget(
                 focusNode: _focusNode,
                 api: _api,
-                reloadData: fetchBooks,
+                reloadData: _fetchBooks,
               ),
             ],
           );

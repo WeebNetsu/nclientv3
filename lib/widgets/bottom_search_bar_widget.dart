@@ -38,6 +38,19 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
   final UserPreferencesModel _userPreferences = UserPreferencesModel();
   bool _loading = true;
 
+  void handleSearch() async {
+    if (_searchText.text.isEmpty) return;
+
+    if (widget._handleSearch != null) {
+      widget._handleSearch!(_searchText.text);
+    } else {
+      await Navigator.pushNamed(context, "/search", arguments: {
+        "searchText": _searchText.text,
+        "api": widget._api,
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -52,21 +65,7 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
 
   @override
   void dispose() {
-    // _searchText.dispose();
     super.dispose();
-  }
-
-  void handleSearch() async {
-    if (_searchText.text.isEmpty) return;
-
-    if (widget._handleSearch != null) {
-      widget._handleSearch!(_searchText.text);
-    } else {
-      await Navigator.pushNamed(context, "/search", arguments: {
-        "searchText": _searchText.text,
-        "api": widget._api,
-      });
-    }
   }
 
   @override
@@ -113,6 +112,7 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
                       ),
                     ),
                     keyboardType: TextInputType.text,
+                    onEditingComplete: handleSearch,
                   ),
                 ),
                 IconButton(
