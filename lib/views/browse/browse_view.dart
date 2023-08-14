@@ -70,9 +70,10 @@ class _BrowseViewState extends State<BrowseView> {
       _api = api;
       if (nextPage) {
         _loadingNextPage = true;
-        if (nextPage) _currentPage += 1;
+        _currentPage += 1;
       } else {
         _loading = true;
+        _currentPage = 1;
       }
     });
 
@@ -94,6 +95,7 @@ class _BrowseViewState extends State<BrowseView> {
 
       try {
         setState(() {
+          if (!nextPage) _bookList.clear();
           _bookList.addAll(searchedBooks.books);
         });
       } on nh.ApiException {

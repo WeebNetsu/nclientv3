@@ -21,6 +21,9 @@ class UserPreferencesModel {
   /// other features to improve app performance
   bool slowInternetMode = false;
 
+  /// If the user wants to temporarily disable their white/blacklisted tags
+  bool disableWhiteAndBlacklists = false;
+
   /// These are the tags the user does not want to see.
   List<String> blacklistedTags = [];
   List<String> blacklistedArtists = [];
@@ -54,6 +57,7 @@ class UserPreferencesModel {
         "whitelistedArtists": whitelistedArtists,
         "whitelistedGroups": whitelistedGroups,
         "whitelistedCharacters": whitelistedCharacters,
+        "disableWhiteAndBlacklists": disableWhiteAndBlacklists
         // "blacklistedBooks": blacklistedBooks,
         // "hideNsfw": hideNsfw,
       });
@@ -111,6 +115,10 @@ class UserPreferencesModel {
 
     if (userDataJson['slowInternetMode'] != null) {
       slowInternetMode = userDataJson['slowInternetMode'] == true ? true : false;
+    }
+
+    if (userDataJson['disableWhiteAndBlacklists'] != null) {
+      disableWhiteAndBlacklists = userDataJson['disableWhiteAndBlacklists'] == true ? true : false;
     }
 
     if (userDataJson['blacklistedTags'] != null) {

@@ -48,6 +48,8 @@ String generateSearchQueryString(String originalQuery, UserPreferencesModel user
     newQuery += newQuery.isEmpty ? '${searchTag.query}' : ' ${searchTag.query}';
   }
 
+  if (userPreferences.disableWhiteAndBlacklists) return newQuery;
+
   if (userPreferences.blacklistedTags.isNotEmpty) {
     for (final tag in userPreferences.blacklistedTags) {
       if (searchTag?.name == tag) continue;
