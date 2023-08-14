@@ -4,7 +4,7 @@ description: New and improved nHentai browsing app!
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 0.7.11+1
+version: 0.8.0+1
 
 environment:
   sdk: ">=3.0.5 <4.0.0"
@@ -52,7 +52,7 @@ dependencies:
   # to zip and unzip files
   archive: ^3.3.7
   # ask user for permissions
-  permission_handler: ^10.4.3
+  # permission_handler: ^10.4.3
   # open up share dialog to send something over social media
   share_plus: ^7.1.0
   file_picker: ^5.3.3

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:nclientv3/constants/constants.dart';
 import 'package:nclientv3/utils/utils.dart';
@@ -51,15 +52,6 @@ class UserPreferencesModel {
     if (zipFile.existsSync()) zipFile.deleteSync();
     zipFiles([file], zipFile.path);
 
-    // All available permissions for permission handler:
-    // https://github.com/Baseflow/flutter-permission-handler/blob/master/permission_handler/example/android/app/src/main/AndroidManifest.xml
-    // Either the permission was already granted before or the user just granted it.
-    // only manage_external_storage can be used to write to custom directory, and unless it is a core
-    // functionality of my app, Play Store will reject it, which we want to avoid, so we'll save to documents folder instead
-    // if (!(await Permission.storage.request().isGranted)) {
-    //   return;
-    // }
-
     // try {
     await Share.shareXFiles(
       [XFile(zipFile.path)],
@@ -85,6 +77,37 @@ class UserPreferencesModel {
     //   "Hello World",
     //   mode: FileMode.write,
     // );
+  }
+
+  Future<void> import() async {
+    // All available permissions for permission handler:
+    // https://github.com/Baseflow/flutter-permission-handler/blob/master/permission_handler/example/android/app/src/main/AndroidManifest.xml
+    // Either the permission was already granted before or the user just granted it.
+    // only manage_external_storage can be used to write to custom directory, and unless it is a core
+    // functionality of my app, Play Store will reject it, which we want to avoid, so we'll save to documents folder instead
+    // if (!(await Permission.storage.request().isGranted)) {
+    //   return;
+    // }
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result == null) return;
+
+    if (result.files.length != 1) {
+      //   displayError("Invalid amount of files chosen");
+      return;
+    }
+
+    PlatformFile file = result.files[0];
+
+    if (file.path == null) return;
+
+    Directory? appDir = await getAppDir();
+    if (appDir == null) return;
+
+    final existingFile = File("${appDir.path}/$saveFileName");
+    if (existingFile.existsSync()) existingFile.delete();
+
+    unzipFile(file.path!, existingFile.parent.path);
   }
 
   Future<bool> saveToFileData() async {

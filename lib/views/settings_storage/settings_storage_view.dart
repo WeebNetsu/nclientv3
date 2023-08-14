@@ -44,6 +44,12 @@ class _SettingsStorageViewState extends State<SettingsStorageView> {
                 await _userPreferences.export();
               },
             ),
+            FullWidthButton(
+              text: "Import Data",
+              onPressed: () async {
+                await _userPreferences.import();
+              },
+            ),
             FutureBuilder<int>(
               future: getCacheSize(),
               builder: (context, snapshot) {

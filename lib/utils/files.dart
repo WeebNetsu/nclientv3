@@ -34,3 +34,26 @@ void zipFiles(List<File> files, String zipFilePath) {
     zipFile.writeAsBytesSync(zipFileContent);
   }
 }
+
+/// Unzips a zip file into a directory.
+///
+/// Takes in the [zipFilePath] of the zip file and the [destinationDirectoryPath] where the unzipped files will be saved.
+void unzipFile(String zipFilePath, String destinationDirectoryPath) {
+  // Read the zip file as bytes
+  final zipFileContent = File(zipFilePath).readAsBytesSync();
+
+  // Create a new archive from the zip file content
+  final archive = ZipDecoder().decodeBytes(zipFileContent);
+
+  // Extract each file from the archive
+  for (final file in archive) {
+    // Get the file path relative to the destination directory
+    final filePath = '$destinationDirectoryPath/${file.name}';
+
+    // Create the directory structure for the file
+    File(filePath).createSync(recursive: true);
+
+    // Write the file content to the disk
+    File(filePath).writeAsBytesSync(file.content);
+  }
+}
