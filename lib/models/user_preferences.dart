@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:nclientv3/constants/constants.dart';
 import 'package:nclientv3/utils/utils.dart';
 import 'package:nhentai/nhentai.dart' as nh;
+import 'package:share_plus/share_plus.dart';
 
 class UserPreferencesModel {
   static const saveFileName = "user_preferences.json";
@@ -38,6 +39,53 @@ class UserPreferencesModel {
 
   /// These are the books the user has hidden
 //   List<String> blacklistedBooks = [];
+
+  Future<void> export() async {
+    Directory? appDir = await getAppDir();
+    if (appDir == null) return;
+
+    final file = File("${appDir.path}/$saveFileName");
+    if (!file.existsSync()) return;
+
+    final zipFile = File("${appDir.path}/user_data.zip");
+    if (zipFile.existsSync()) zipFile.deleteSync();
+    zipFiles([file], zipFile.path);
+
+    // All available permissions for permission handler:
+    // https://github.com/Baseflow/flutter-permission-handler/blob/master/permission_handler/example/android/app/src/main/AndroidManifest.xml
+    // Either the permission was already granted before or the user just granted it.
+    // only manage_external_storage can be used to write to custom directory, and unless it is a core
+    // functionality of my app, Play Store will reject it, which we want to avoid, so we'll save to documents folder instead
+    // if (!(await Permission.storage.request().isGranted)) {
+    //   return;
+    // }
+
+    // try {
+    await Share.shareXFiles(
+      [XFile(zipFile.path)],
+      text: "My NClientV3 save data",
+    );
+    // } catch (e) {
+    // todo do something?
+    // }
+
+    // if running into errors, https://github.com/miguelpruivo/flutter_file_picker/wiki/Setup#android
+    // find out where the user wants to export to
+    /* final String? exportPath = await FilePicker.platform.getDirectoryPath();
+
+    // if no folder was chosen
+    if (exportPath == null) return;
+
+    File exportFile = await File(
+      "$exportPath/zs_tracker_data_${DateTime.now().toString().replaceAll(' ', '_')}.sav",
+    ).create(recursive: true);
+    */
+    // // if the file is empty, don't append , at the start of the json!
+    // await exportFile.writeAsString(
+    //   "Hello World",
+    //   mode: FileMode.write,
+    // );
+  }
 
   Future<bool> saveToFileData() async {
     Directory? appDir = await getAppDir();
