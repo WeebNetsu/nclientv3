@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:nclientv3/models/saved_book.dart';
 import 'package:nclientv3/utils/utils.dart';
 import 'package:nclientv3/widgets/widgets.dart';
@@ -25,8 +26,12 @@ class _DownloadsReadBookViewState extends State<DownloadsReadBookView> {
   int? _bookId;
   SavedBookModel? _book;
   final List<File> _images = [];
+  int _visiblePages = 10;
 
-  Future<void> fetchBook() async {
+  Future<void> _fetchBook() async {
+    setState(() {
+      _loading = true;
+    });
     try {
       if (_bookId == null) {
         _errorMessage = "Did not get book ID... Coding bug, gomen!";
@@ -78,8 +83,13 @@ class _DownloadsReadBookViewState extends State<DownloadsReadBookView> {
       final int? bookId = arguments?['bookId'];
 
       _bookId = bookId;
-      fetchBook();
+      _fetchBook();
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -95,83 +105,184 @@ class _DownloadsReadBookViewState extends State<DownloadsReadBookView> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: ListView(
-          children: [
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _book!.title ?? "OwO! No title?!",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+        child: LazyLoadScrollView(
+          onEndOfPage: () {
+            setState(() {
+              _visiblePages += 10;
+            });
+          },
+          child: ListView(
+            children: [
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _book!.title ?? "OwO! No title?!",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: GestureDetector(
-                      onTap: () {
-                        copyTextToClipboard(context, _book!.id.toString());
-                      },
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: GestureDetector(
+                        onTap: () {
+                          copyTextToClipboard(context, _book!.id.toString());
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Code: ",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "${_book!.id}",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "Code: ",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            "${_book!.id}",
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          Text("Pages: ${_images.length}"),
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () async {
+                              await _book!.deleteBook(afterDelete: () => Navigator.pop(context));
+                            },
+                          )
                         ],
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Pages: ${_images.length}"),
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () async {
-                            await _book!.deleteBook(afterDelete: () => Navigator.pop(context));
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                ],
+                    const SizedBox(height: 10),
+                  ],
+                ),
               ),
-            ),
 
-            // the actual doujin content
-            ListView.builder(
-              shrinkWrap: true, // Allow the ListView to take only the space it needs
-              physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the ListView
-              itemCount: _images.length,
-              itemBuilder: (BuildContext context, int index) {
-                final page = _images[index];
+              // the actual doujin content
+              ListView.builder(
+                shrinkWrap: true, // Allow the ListView to take only the space it needs
+                physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the ListView
+                // itemCount: _images.length,
+                itemCount: _images.length > _visiblePages ? _visiblePages : _images.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final page = _images[index];
 
-                return BookPageWidget(page: page);
-              },
-            ),
-            const SizedBox(height: 40),
-          ],
+                  return BookPageWidget(page: page);
+                },
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+
+/* 
+ return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: LazyLoadScrollView(
+          onEndOfPage: () {
+            setState(() {
+              _visiblePages += 10;
+            });
+          },
+          child: ListView(
+            children: [
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _book!.title ?? "OwO! No title?!",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: GestureDetector(
+                        onTap: () {
+                          copyTextToClipboard(context, _book!.id.toString());
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Code: ",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "${_book!.id}",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Pages: ${_images.length}"),
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () async {
+                              await _book!.deleteBook(afterDelete: () => Navigator.pop(context));
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              ),
+
+              // the actual doujin content
+              ListView.builder(
+                shrinkWrap: true, // Allow the ListView to take only the space it needs
+                physics: const NeverScrollableScrollPhysics(), // Disable scrolling for the ListView
+                // itemCount: _images.length,
+                itemCount: _images.length > _visiblePages ? _visiblePages : _images.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final page = _images[index];
+
+                  return BookPageWidget(page: page);
+                },
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
+        ),
+      ),
+    );
+   */

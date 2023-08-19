@@ -21,7 +21,7 @@ class ReadBookView extends StatefulWidget {
 
 class _ReadBookViewState extends State<ReadBookView> {
   Map<String, dynamic>? arguments;
-  late Future<void> _loadingBook = fetchBook();
+  late Future<void> _loadingBook = _fetchBook();
   String? _errorMessage;
   int? _bookId;
   nh.API? _api;
@@ -37,7 +37,7 @@ class _ReadBookViewState extends State<ReadBookView> {
   /// works directly with _totalDownloadPercent
   int _totalPagesDownloaded = 0;
 
-  Future<void> fetchBook() async {
+  Future<void> _fetchBook() async {
     if (_bookId == null || _api == null) {
       _errorMessage = "Did not get book ID or api... Coding bug, gomen!";
       return;
@@ -96,14 +96,12 @@ class _ReadBookViewState extends State<ReadBookView> {
 
       _bookId = bookId;
       _api = api;
-      _loadingBook = fetchBook();
+      _loadingBook = _fetchBook();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // final scrollController = ScrollController();
-
     if (_errorMessage != null) {
       return MessagePageWidget(text: _errorMessage!);
     }
