@@ -125,6 +125,12 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
                     Navigator.pushNamed(context, "/downloads");
                   },
                 ),
+                IconButton(
+                  icon: const Icon(Icons.star),
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/favorites");
+                  },
+                ),
                 PopupMenuButton(
                   child: const Icon(Icons.sort),
                   itemBuilder: (_) {

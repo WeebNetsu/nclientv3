@@ -38,8 +38,11 @@ class UserPreferencesModel {
   List<String> whitelistedGroups = [];
   List<String> whitelistedCharacters = [];
 
+  /// These are all the users favorite doujins (saves book ID)
+  List<int> favoriteBooks = [];
+
   /// These are the books the user has hidden
-//   List<String> blacklistedBooks = [];
+  // List<String> blacklistedBooks = [];
 
   Future<void> export() async {
     Directory? appDir = await getAppDir();
@@ -128,7 +131,8 @@ class UserPreferencesModel {
         "whitelistedArtists": whitelistedArtists,
         "whitelistedGroups": whitelistedGroups,
         "whitelistedCharacters": whitelistedCharacters,
-        "disableWhiteAndBlacklists": disableWhiteAndBlacklists
+        "disableWhiteAndBlacklists": disableWhiteAndBlacklists,
+        "favoriteBooks": favoriteBooks
         // "blacklistedBooks": blacklistedBooks,
         // "hideNsfw": hideNsfw,
       });
@@ -222,6 +226,10 @@ class UserPreferencesModel {
 
     if (userDataJson['whitelistedCharacters'] != null) {
       whitelistedCharacters = List<String>.from(userDataJson['whitelistedCharacters']);
+    }
+
+    if (userDataJson['favoriteBooks'] != null) {
+      favoriteBooks = List<int>.from(userDataJson['favoriteBooks']);
     }
 
     // if (userDataJson['blacklistedBooks'] != null) {

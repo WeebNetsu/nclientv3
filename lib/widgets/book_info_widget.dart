@@ -89,8 +89,39 @@ class _BookInfoWidgetState extends State<BookInfoWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(style: TextStyle(color: widget._textColor), "Pages: ${widget._book.pages.length}"),
-                Text(style: TextStyle(color: widget._textColor), "Favorites: ${widget._book.favorites}"),
+                Text(
+                  "Pages: ${widget._book.pages.length}",
+                  style: TextStyle(color: widget._textColor),
+                ),
+                Text(
+                  "Favorites: ${widget._book.favorites}",
+                  style: TextStyle(color: widget._textColor),
+                ),
+                Material(
+                  type: MaterialType.transparency,
+                  child: IconButton(
+                    onPressed: () {
+                      // Add your onPressed logic here
+                      if (widget._userPreferences.favoriteBooks.contains(widget._book.id)) {
+                        final bookIndex = widget._userPreferences.favoriteBooks.indexOf(widget._book.id);
+                        widget._userPreferences.favoriteBooks.removeAt(bookIndex);
+                      } else {
+                        widget._userPreferences.favoriteBooks.add(widget._book.id);
+                      }
+
+                      setState(() {
+                        widget._userPreferences.saveToFileData();
+                      });
+                    },
+                    icon: Icon(
+                      widget._userPreferences.favoriteBooks.contains(widget._book.id)
+                          ? Icons.star
+                          : Icons.star_outline_outlined,
+                    ),
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(),
+                  ),
+                ),
               ],
             ),
           ),
