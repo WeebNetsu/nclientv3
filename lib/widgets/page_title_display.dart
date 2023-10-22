@@ -4,9 +4,11 @@ class PageTitleDisplay extends StatelessWidget {
   const PageTitleDisplay({
     super.key,
     required this.title,
+    this.removeBottomPadding = false,
   });
 
   final String title;
+  final bool removeBottomPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class PageTitleDisplay extends StatelessWidget {
             ),
           ),
         ]),
-        const SizedBox(height: 20),
+        SizedBox(height: removeBottomPadding ? 0 : 20),
       ],
     );
   }

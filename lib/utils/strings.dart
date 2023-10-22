@@ -32,6 +32,7 @@ String capitalizeFirstLetter(String input) {
 /// Generate a tag url, `/tag/value/`
 String generateTagUrl(String name) => '/tag/$name/';
 
+/// Generates a search query string based on the given parameters.
 String generateSearchQueryString(String originalQuery, UserPreferencesModel userPreferences, {nh.Tag? searchTag}) {
   String newQuery = originalQuery;
 

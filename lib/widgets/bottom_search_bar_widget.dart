@@ -128,7 +128,9 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
                 IconButton(
                   icon: const Icon(Icons.star),
                   onPressed: () {
-                    Navigator.pushNamed(context, "/favorites");
+                    Navigator.pushNamed(context, "/favorites", arguments: {
+                      "api": widget._api,
+                    });
                   },
                 ),
                 PopupMenuButton(
