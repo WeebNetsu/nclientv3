@@ -1,6 +1,6 @@
 ---
 name: I have a question/need help
-about: Need help using MASAMI? Ask away
+about: Need help using NClientV3? Ask away
 title: ""
 labels: question
 assignees: ""

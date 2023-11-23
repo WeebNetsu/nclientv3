@@ -42,8 +42,8 @@ Steps to reproduce the behavior:
 <!-- Update as needed! -->
 
 - OS: Android
-- OS Version: 8
-- App Version: 0.1.0
+- OS Version: 10
+- App Version: 0.8.0
 
 **Additional context**
 
