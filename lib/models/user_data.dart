@@ -54,8 +54,7 @@ class UserDataModel {
     return false;
   }
 
-  /// Load cookie data. If `filePath` is provided, read sleep data from the provided path file,
-  ///
+  /// Load cookie data. If `filePath` is provided, read file data from the provided path file,
   /// else read the data from our cookies.json in our app directory
   Future<bool> loadDataFromFile() async {
     final Directory? appDir = await getAppDir();
@@ -67,7 +66,16 @@ class UserDataModel {
     if (!saveFile.existsSync()) return false;
 
     final saveData = await saveFile.readAsString();
-    final userDataJson = jsonDecode(saveData);
+    dynamic userDataJson;
+    try {
+      userDataJson = jsonDecode(saveData);
+    } on FormatException catch (e) {
+      debugPrint(e.toString());
+
+      // if this is the case then our save data is incorrectly formatted and we should redo not a robot check
+      return false;
+    }
+
     final List<Cookie> extractedCookies = [];
 
     if (userDataJson['cookies'] != null) {

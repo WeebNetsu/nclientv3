@@ -64,23 +64,30 @@ class _NotARobotViewState extends State<NotARobotView> {
             }
           },
           onUrlChange: (change) async {
-            if (change.url == NHentaiConstants.url) {
-              final realCookieManager = WebviewCookieManager();
-              final gotCookies = await realCookieManager.getCookies(NHentaiConstants.url);
-              final newUserData = UserDataModel();
+            final url = change.url;
 
-              newUserData.userAgent = userAgent;
+            if (url != NHentaiConstants.url) return;
 
-              newUserData.cookies = gotCookies;
-              final success = await newUserData.saveToFileData();
+            final realCookieManager = WebviewCookieManager();
+            final gotCookies = await realCookieManager.getCookies(NHentaiConstants.url);
+            final newUserData = UserDataModel();
 
-              if (!success || userAgent == null || userAgent == 'null' || gotCookies.toString() == '[]') {
-                debugPrint("Could not save user data");
-                return;
-              }
+            newUserData.userAgent = userAgent;
 
-              (() => Navigator.pop(context))();
+            newUserData.cookies = gotCookies;
+            final success = await newUserData.saveToFileData();
+
+            if (!success || userAgent == null || userAgent == 'null' || gotCookies.toString() == '[]') {
+              debugPrint("Could not save user data");
+
+              //   if (gotCookies.toString() == '[]') {
+              //     return controller.reload();
+              //   }
+
+              return;
             }
+
+            (() => {Navigator.pop(context)})();
           },
         ),
       )
