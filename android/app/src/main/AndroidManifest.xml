@@ -4,7 +4,8 @@
     <application
         android:label="NClientV3"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/launcher_icon"
+        android:enableOnBackInvokedCallback="true">
         <activity
             android:networkSecurityConfig="@xml/network_security_config"
             android:name=".MainActivity"

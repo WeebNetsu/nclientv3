@@ -119,7 +119,7 @@ class _BookInfoWidgetState extends State<BookInfoWidget> {
                           : Icons.star_outline_outlined,
                     ),
                     padding: EdgeInsets.zero,
-                    constraints: BoxConstraints(),
+                    constraints: const BoxConstraints(),
                   ),
                 ),
               ],

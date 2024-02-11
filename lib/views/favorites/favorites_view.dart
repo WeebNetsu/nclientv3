@@ -44,7 +44,7 @@ class _FavoritesViewState extends State<FavoritesView> {
     }
 
     try {
-      final book = await _api!.getBook(bookId!);
+      final book = await _api!.getBook(bookId);
       await _userPreferences.loadDataFromFile();
 
       setState(() {
@@ -54,6 +54,15 @@ class _FavoritesViewState extends State<FavoritesView> {
       setState(() {
         _errorMessage = "Oh no, the API said '${error.message}'!";
       });
+    } on nh.ApiClientException catch (e) {
+      if (e.response?.reasonPhrase == "Too Many Requests") {
+        // just retry the fetch
+        await _fetchBook(bookId);
+      } else {
+        setState(() {
+          _errorMessage = "Oh no! something went wrong...";
+        });
+      }
     } catch (error) {
       print(error);
       setState(() {
