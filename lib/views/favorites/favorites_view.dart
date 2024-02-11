@@ -83,7 +83,7 @@ class _FavoritesViewState extends State<FavoritesView> {
     }
   }
 
-  Future<void> _searchBooks({int? selectedBookId, nh.API? api, bool nextPage = false}) async {
+  Future<void> _searchBooks({int? selectedBookId, nh.API? api}) async {
     setState(() {
       _errorMessage = null;
     });

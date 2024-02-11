@@ -4,5 +4,5 @@ class NHentaiConstants {
   static const String url = "https://nhentai.net/";
 
   /// Language Tags
-  static const List<String> languages = ["*", "english"];
+  static const List<String> languages = ["*", "english", "chinese", "japanese"];
 }
