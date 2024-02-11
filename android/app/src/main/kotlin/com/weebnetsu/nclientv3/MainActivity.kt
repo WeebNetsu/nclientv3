@@ -1,4 +1,4 @@
-package com.weebnetsu.nclientv3
+package com.stevesteacher.nclientv3
 
 import io.flutter.embedding.android.FlutterActivity
 
