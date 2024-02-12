@@ -33,6 +33,10 @@ Please be descriptive of your issues, if you create an issue and all it says is 
     - `widgets/` - Widgets that were designed to only work with this view
   - `widgets/` - Global scope widgets
 
+### Building from Source
+
+`flutter clean && flutter pub get && flutter build apk --release`
+
 ### Resources
 
 - [Flutter](https://flutter.dev)
