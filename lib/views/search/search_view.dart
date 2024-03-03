@@ -79,7 +79,8 @@ class _SearchViewState extends State<SearchView> {
 
       final nh.Search searchRes = await (api ?? _api)!.searchSinglePage(
         generateSearchQueryString(text, _userPreferences, searchTag: _tag),
-        sort: _userPreferences.sort,
+        // temp fix since .popular causes a does not exist error
+        sort: _userPreferences.sort == nh.SearchSort.popular ? nh.SearchSort.popularMonth : _userPreferences.sort,
         page: _currentPage,
       );
 

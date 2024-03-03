@@ -6,6 +6,7 @@ import 'package:nclientv3/models/models.dart';
 import 'package:nclientv3/utils/utils.dart';
 import 'package:nclientv3/widgets/widgets.dart';
 import 'package:nhentai/before_request_add_cookies.dart';
+import 'package:nhentai/data_model.dart';
 import 'package:nhentai/nhentai.dart' as nh;
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 
@@ -89,7 +90,8 @@ class _BrowseViewState extends State<BrowseView> {
       // get 1 page of the most recent books
       searchedBooks = await _api.searchSinglePage(
         searchQuery,
-        sort: _userPreferences.sort,
+        // temporary fix to fix popular causing does not exist error
+        sort: _userPreferences.sort == SearchSort.popular ? SearchSort.popularMonth : _userPreferences.sort,
         page: _currentPage,
       );
 

@@ -143,10 +143,10 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
                         title: "Recent",
                         value: _userPreferences.sort == nh.SearchSort.recent,
                       ),
-                      PopupMenuItemModel(
-                        title: "Popular",
-                        value: _userPreferences.sort == nh.SearchSort.popular,
-                      ),
+                      //   PopupMenuItemModel(
+                      //     title: "Popular",
+                      //     value: _userPreferences.sort == nh.SearchSort.popular,
+                      //   ),
                       PopupMenuItemModel(
                         title: "Popular (Month)",
                         value: _userPreferences.sort == nh.SearchSort.popularMonth,
@@ -174,9 +174,10 @@ class _BottomSearchBarWidget extends State<BottomSearchBarWidget> {
 
                       if (selectedItem.title == "Recent") {
                         _userPreferences.sort = nh.SearchSort.recent;
-                      } else if (selectedItem.title == "Popular") {
+                      } /* else if (selectedItem.title == "Popular") {
                         _userPreferences.sort = nh.SearchSort.popular;
-                      } else if (selectedItem.title == "Popular (Month)") {
+                      } */
+                      else if (selectedItem.title == "Popular (Month)") {
                         _userPreferences.sort = nh.SearchSort.popularMonth;
                       } else if (selectedItem.title == "Popular (Week)") {
                         _userPreferences.sort = nh.SearchSort.popularWeek;
